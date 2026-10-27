@@ -40,6 +40,15 @@ Push `avatars/` to GitHub afterwards so the new avatar is reachable.
 
 ## Adjusting an avatar crop
 
-Each character in `characters.json` has `"crop": [left, top, size]`:
+Easiest: select the character and click **Edit framing…** (under the message box, or in the File menu).
+Switch between the Normal and Zoomed frames, drag the frame / scroll to zoom, and **Save as default** —
+this updates `characters.json` and re-renders the avatar PNG. Push `avatars/` afterwards.
+
+By hand: each character in `characters.json` has `"crop": [left, top, size]`:
 `left` and `size` are fractions of the image width, `top` is a fraction of its height.
 Edit it, then **File → Rebuild all avatars** (or `python catalog.py --force`).
+
+Optional extras per character:
+- `"zoom": [left, top, size]` — a second, close-up crop saved as `<name>-zoom.png`. The **Zoomed avatar**
+  checkbox under the message box posts with it (greyed out for characters without one).
+- `"background": "#rrggbb"` — fills transparent areas with a soft backdrop in that colour (used for the Gods of Dagda).

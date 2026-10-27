@@ -24,7 +24,10 @@ IMAGE_EXTS = {".webp", ".png", ".jpg", ".jpeg", ".gif"}
 # Filename noise to strip when guessing a display name.
 _NAME_NOISE = [
     re.compile(r"^FEFW_Nintendo_Today_", re.I),
+    re.compile(r"^Artwork_", re.I),
+    re.compile(r"^(Medium|Small|Large)_portrait_", re.I),
     re.compile(r"_profile$", re.I),
+    re.compile(r"_FE\d+$", re.I),
     re.compile(r"FE\d+Portrait$", re.I),
     re.compile(r"[ _]?Portrait$", re.I),
 ]
@@ -82,8 +85,25 @@ def default_crop(width: int, height: int) -> list:
     return [0.0, 0.0, 1.0]
 
 
-def render_avatar(source: Path, dest: Path, crop: list) -> None:
-    """crop = [left, top, size]; left/size are fractions of width, top of height."""
+def backdrop(color: str, size: int = AVATAR_SIZE) -> Image.Image:
+    """A soft radial glow in `color`: a little lighter in the middle, darker at the edges."""
+    base = tuple(int(color.lstrip("#")[i:i + 2], 16) for i in (0, 2, 4))
+    small = 64
+    img = Image.new("RGB", (small, small))
+    c = (small - 1) / 2
+    for y in range(small):
+        for x in range(small):
+            t = min(1.0, (((x - c) ** 2 + (y - c) ** 2) ** 0.5) / (c * 1.42))
+            k = 1.35 - 0.6 * t  # 1.35x at the centre, 0.75x at the corners
+            img.putpixel((x, y), tuple(min(255, round(v * k)) for v in base))
+    return img.resize((size, size), Image.BICUBIC).convert("RGBA")
+
+
+def render_avatar(source: Path, dest: Path, crop: list, background: str | None = None) -> None:
+    """crop = [left, top, size]; left/size are fractions of width, top of height.
+
+    `background` (a hex colour) fills any transparent areas with a soft backdrop.
+    """
     with Image.open(source) as im:
         im = im.convert("RGBA")
         w, h = im.size
@@ -91,8 +111,15 @@ def render_avatar(source: Path, dest: Path, crop: list) -> None:
         side = size * w
         box = (round(left * w), round(top * h), round(left * w + side), round(top * h + side))
         im = im.crop(box).resize((AVATAR_SIZE, AVATAR_SIZE), Image.LANCZOS)
+        if background:
+            im = Image.alpha_composite(backdrop(background), im)
         dest.parent.mkdir(parents=True, exist_ok=True)
         im.save(dest, "PNG", optimize=True)
+
+
+def zoom_avatar(character: dict) -> str:
+    """Path (under avatars/) of the close-up variant, for characters with a "zoom" crop."""
+    return character["avatar"].removesuffix(".png") + "-zoom.png"
 
 
 def sync(force: bool = False, progress=None) -> dict:
@@ -132,16 +159,21 @@ def sync(force: bool = False, progress=None) -> dict:
         if cid not in seen:
             del characters[cid]
 
-    todo = []
+    todo = []  # (character, avatar path, crop)
     for cid, c in characters.items():
-        src, dest = ROOT / c["source"], AVATARS_DIR / c["avatar"]
-        if force or not dest.exists() or src.stat().st_mtime > dest.stat().st_mtime:
-            todo.append(c)
+        src = ROOT / c["source"]
+        variants = [(c["avatar"], c["crop"])]
+        if c.get("zoom"):
+            variants.append((zoom_avatar(c), c["zoom"]))
+        for avatar, crop in variants:
+            dest = AVATARS_DIR / avatar
+            if force or not dest.exists() or src.stat().st_mtime > dest.stat().st_mtime:
+                todo.append((c, avatar, crop))
 
-    for i, c in enumerate(todo):
+    for i, (c, avatar, crop) in enumerate(todo):
         if progress:
             progress(i, len(todo), c["name"])
-        render_avatar(ROOT / c["source"], AVATARS_DIR / c["avatar"], c["crop"])
+        render_avatar(ROOT / c["source"], AVATARS_DIR / avatar, crop, c.get("background"))
     if progress:
         progress(len(todo), len(todo), "")
 

@@ -14,9 +14,9 @@ from PyQt6.QtGui import (
     QPen, QPixmap, QPolygonF, QShortcut,
 )
 from PyQt6.QtWidgets import (
-    QApplication, QButtonGroup, QComboBox, QDialog, QDialogButtonBox, QFileDialog, QFormLayout, QFrame,
+    QApplication, QButtonGroup, QCheckBox, QComboBox, QDialog, QDialogButtonBox, QFileDialog, QFormLayout, QFrame,
     QGraphicsOpacityEffect, QHBoxLayout, QLabel, QLayout, QLineEdit, QMainWindow, QMenu, QMessageBox,
-    QPlainTextEdit, QProgressDialog, QPushButton, QScrollArea, QSizePolicy, QSplitter, QToolButton,
+    QPlainTextEdit, QProgressDialog, QPushButton, QScrollArea, QSizePolicy, QSlider, QSplitter, QToolButton,
     QVBoxLayout, QWidget,
 )
 
@@ -54,7 +54,7 @@ SEAL_HI = "#a8352a"
 
 FACTION_COLORS = {
     "Fiery Mane": "#7a1f1f",
-    "Gods of Dagda": "#d9cfae",
+    "Gods of Dagda": "#24373a",  # Kalla's card colour, also the backdrop behind the gods' avatars
     "House Lamine": "#4b3466",
     "Kingdom of Arago": "#2f5d4f",
     "Linaria's Dewdrops": "#2e5e5a",
@@ -176,6 +176,18 @@ def stylesheet():
                         font-family: "{DISPLAY_FAMILY}"; font-size: 15px; font-weight: 700; padding: 0 18px; }}
     QPushButton#send:hover {{ background: {SEAL_HI}; }}
     QPushButton#send:disabled {{ background: {RAISED}; color: {MUTED}; border-color: {LINE}; }}
+    QCheckBox {{ color: {MUTED}; font-size: 15px; spacing: 8px; }}
+    QCheckBox:checked {{ color: {GOLD_HI}; }}
+    QCheckBox:disabled {{ color: #6d6252; }}
+    QCheckBox::indicator {{ width: 14px; height: 14px; border: 1px solid {LINE_HI}; background: {INK};
+                            border-radius: 2px; }}
+    QCheckBox::indicator:hover {{ border-color: {GOLD}; }}
+    QCheckBox::indicator:checked {{ background: {GOLD}; border-color: {GOLD_HI}; }}
+    QCheckBox::indicator:disabled {{ border-color: {LINE}; background: transparent; }}
+    QSlider::groove:horizontal {{ height: 4px; background: {LINE}; border-radius: 2px; }}
+    QSlider::sub-page:horizontal, QSlider::add-page:horizontal {{ background: {LINE}; border-radius: 2px; }}
+    QSlider::handle:horizontal {{ background: {GOLD}; border: 1px solid {GOLD_HI}; width: 14px;
+                                 margin: -6px 0; border-radius: 7px; }}
     QToolButton#remove {{ background: {INK}; border: 1px solid {GOLD}; border-radius: 9px; color: {GOLD_HI};
                           font-size: 12px; }}
     QToolButton#fileMenu {{ background: transparent; border: 0; color: {MUTED}; font-size: 15px; padding: 4px 8px; }}
@@ -406,6 +418,11 @@ class PortraitTile(QWidget):
     def set_name(self, name):
         self.name = name
         self.setAccessibleName(name)
+        self.update()
+
+    def set_source(self, source: QPixmap):
+        self._src = source
+        self._cache = None
         self.update()
 
     def _circle(self):
@@ -887,6 +904,256 @@ class SettingsDialog(QDialog):
         (QMessageBox.information if ok else QMessageBox.warning)(self, "Avatar URL test", msg)
 
 
+class CropCanvas(QWidget):
+    """The whole source portrait with a square frame: drag to move it, scroll to resize it."""
+
+    changed = pyqtSignal()
+    MIN_SIZE = 0.05
+
+    def __init__(self, source: QPixmap):
+        super().__init__()
+        self.iw, self.ih = max(1, source.width()), max(1, source.height())
+        # Big portraits are scaled once up front so dragging stays smooth.
+        self.view = source.scaled(1400, 1400, Qt.AspectRatioMode.KeepAspectRatio,
+                                  Qt.TransformationMode.SmoothTransformation) if not source.isNull() else source
+        self.crop = [0.0, 0.0, 1.0]
+        self._drag = None  # (press position, crop at press)
+        self.setMinimumSize(500, 500)
+        self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.setCursor(Qt.CursorShape.OpenHandCursor)
+
+    def max_size(self):
+        return max(1.0, self.ih / self.iw)
+
+    def set_crop(self, crop):
+        self.crop = list(crop)
+        self.update()
+
+    def _image_rect(self):
+        avail = QRectF(self.rect()).adjusted(14, 14, -14, -14)
+        scale = min(avail.width() / self.iw, avail.height() / self.ih)
+        w, h = self.iw * scale, self.ih * scale
+        return QRectF(avail.center().x() - w / 2, avail.center().y() - h / 2, w, h)
+
+    def _frame_rect(self):
+        img = self._image_rect()
+        left, top, size = self.crop
+        side = size * img.width()
+        return QRectF(img.left() + left * img.width(), img.top() + top * img.height(), side, side)
+
+    def _apply(self, left, top, size):
+        size = min(max(size, self.MIN_SIZE), self.max_size())
+        side_h = size * self.iw / self.ih  # frame height as a fraction of the image height
+        # The frame may hang off the edge (transparent there), but its centre stays on the image.
+        left = min(max(left, -size / 2), 1 - size / 2)
+        top = min(max(top, -side_h / 2), 1 - side_h / 2)
+        self.crop = [round(left, 4), round(top, 4), round(size, 4)]
+        self.update()
+        self.changed.emit()
+
+    def _centre(self):
+        left, top, size = self.crop
+        return left + size / 2, top + size * self.iw / self.ih / 2
+
+    def resize_frame(self, size):
+        cx, cy = self._centre()
+        size = min(max(size, self.MIN_SIZE), self.max_size())
+        self._apply(cx - size / 2, cy - size * self.iw / self.ih / 2, size)
+
+    def paintEvent(self, _):
+        p = QPainter(self)
+        p.setRenderHint(QPainter.RenderHint.Antialiasing)
+        p.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform)
+        img = self._image_rect()
+        p.fillRect(img, QColor("#2a2520"))  # shows through transparent art
+        p.drawPixmap(img, self.view, QRectF(self.view.rect()))
+        frame = self._frame_rect()
+        shade = QPainterPath()
+        shade.setFillRule(Qt.FillRule.OddEvenFill)
+        shade.addRect(QRectF(self.rect()))
+        shade.addRect(frame)
+        p.fillPath(shade, QColor(10, 8, 6, 175))
+        p.setBrush(Qt.BrushStyle.NoBrush)
+        p.setPen(QPen(QColor(GOLD_HI), 2))
+        p.drawRect(frame)
+        p.setPen(QPen(QColor(GOLD), 1, Qt.PenStyle.DashLine))
+        p.drawEllipse(frame)  # what Discord's round avatar shows
+
+    def mousePressEvent(self, e):
+        if e.button() != Qt.MouseButton.LeftButton:
+            return
+        pos = e.position()
+        if not self._frame_rect().contains(pos):  # clicking elsewhere centres the frame there first
+            img = self._image_rect()
+            size = self.crop[2]
+            cx, cy = (pos.x() - img.left()) / img.width(), (pos.y() - img.top()) / img.height()
+            self._apply(cx - size / 2, cy - size * self.iw / self.ih / 2, size)
+        self._drag = (pos, list(self.crop))
+        self.setCursor(Qt.CursorShape.ClosedHandCursor)
+
+    def mouseMoveEvent(self, e):
+        if not self._drag:
+            return
+        start, (left, top, size) = self._drag
+        img = self._image_rect()
+        d = e.position() - start
+        self._apply(left + d.x() / img.width(), top + d.y() / img.height(), size)
+
+    def mouseReleaseEvent(self, _):
+        self._drag = None
+        self.setCursor(Qt.CursorShape.OpenHandCursor)
+
+    def wheelEvent(self, e):
+        self.resize_frame(self.crop[2] * 0.95 ** (e.angleDelta().y() / 120))  # scroll up = zoom in
+
+    def keyPressEvent(self, e):
+        step = 0.02 if e.modifiers() & Qt.KeyboardModifier.ShiftModifier else 0.004
+        left, top, size = self.crop
+        r = self.iw / self.ih
+        moves = {Qt.Key.Key_Left: (-step, 0), Qt.Key.Key_Right: (step, 0),
+                 Qt.Key.Key_Up: (0, -step * r), Qt.Key.Key_Down: (0, step * r)}
+        if e.key() in moves:
+            dx, dy = moves[e.key()]
+            self._apply(left + dx, top + dy, size)
+        elif e.key() in (Qt.Key.Key_Plus, Qt.Key.Key_Equal):
+            self.resize_frame(size * 0.97)
+        elif e.key() == Qt.Key.Key_Minus:
+            self.resize_frame(size / 0.97)
+        else:
+            super().keyPressEvent(e)
+
+
+class FramingDialog(QDialog):
+    """Adjust a character's normal and zoomed avatar frames; Save writes them as the new defaults."""
+
+    KINDS = (("crop", "Normal"), ("zoom", "Zoomed"))
+
+    def __init__(self, parent, character, kind="crop"):
+        super().__init__(parent)
+        self.setWindowTitle(f"Edit framing — {character['name']}")
+        self.src = QPixmap(str(catalog.ROOT / character["source"]))
+        self.saved = {"crop": list(character["crop"]), "zoom": list(character.get("zoom") or character["crop"])}
+        self.work = {k: list(v) for k, v in self.saved.items()}
+        self.kind = kind
+        self.backdrop = QPixmap()
+        if character.get("background"):
+            from io import BytesIO
+            buf = BytesIO()
+            catalog.backdrop(character["background"], 256).save(buf, "PNG")
+            self.backdrop.loadFromData(buf.getvalue())
+
+        self.canvas = CropCanvas(self.src)
+        self.canvas.changed.connect(self._on_canvas)
+
+        side = QVBoxLayout()
+        side.setSpacing(12)
+        side.addWidget(label(character["name"], font=display_font(22)))
+        side.addWidget(label(character["faction"], "muted", body_font(15, italic=True)))
+        tabs = QHBoxLayout()
+        tabs.setSpacing(6)
+        self.tab_group = QButtonGroup(self)
+        for k, text in self.KINDS:
+            b = QPushButton(text)
+            b.setObjectName("pill")
+            b.setCheckable(True)
+            b.setChecked(k == kind)
+            b.setCursor(Qt.CursorShape.PointingHandCursor)
+            b.setProperty("kind", k)
+            self.tab_group.addButton(b)
+            tabs.addWidget(b)
+        tabs.addStretch()
+        self.tab_group.buttonClicked.connect(lambda b: self.set_kind(b.property("kind")))
+        side.addLayout(tabs)
+
+        previews = QHBoxLayout()
+        previews.setSpacing(14)
+        self.big, self.small = QLabel(), QLabel()
+        previews.addWidget(self.big)
+        previews.addWidget(self.small, 0, Qt.AlignmentFlag.AlignBottom)
+        previews.addStretch()
+        side.addSpacing(6)
+        side.addLayout(previews)
+
+        side.addSpacing(6)
+        side.addWidget(label("FRAME SIZE", "muted", display_font(11, spacing=130)))
+        self.slider = QSlider(Qt.Orientation.Horizontal)
+        self.slider.setRange(round(CropCanvas.MIN_SIZE * 1000), round(self.canvas.max_size() * 1000))
+        self.slider.setInvertedAppearance(True)  # right = closer
+        self.slider.valueChanged.connect(lambda v: self.canvas.resize_frame(v / 1000))
+        side.addWidget(self.slider)
+        hint = label("Drag the frame to move it · scroll or +/− to zoom\n"
+                     "Arrow keys nudge (hold Shift for bigger steps)", "muted", body_font(14, italic=True))
+        side.addWidget(hint)
+        side.addStretch()
+
+        revert = QPushButton("Revert")
+        revert.setObjectName("ghost")
+        revert.setToolTip("Back to the saved framing")
+        revert.clicked.connect(self.revert)
+        cancel = QPushButton("Cancel")
+        cancel.clicked.connect(self.reject)
+        save = QPushButton("SAVE AS DEFAULT")
+        save.setObjectName("send")
+        save.setMinimumHeight(38)
+        save.clicked.connect(self.accept)
+        buttons = QHBoxLayout()
+        buttons.addWidget(revert)
+        buttons.addStretch()
+        buttons.addWidget(cancel)
+        buttons.addWidget(save)
+        side.addLayout(buttons)
+
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(16, 16, 20, 16)
+        layout.setSpacing(20)
+        layout.addWidget(self.canvas, 1)
+        layout.addLayout(side)
+        self.resize(1000, 680)
+        self.set_kind(kind)
+        self.canvas.setFocus()
+
+    def set_kind(self, kind):
+        self.kind = kind
+        self.canvas.set_crop(self.work[kind])
+        self._sync_controls()
+
+    def revert(self):
+        self.work[self.kind] = list(self.saved[self.kind])
+        self.set_kind(self.kind)
+
+    def changes(self):
+        """{kind: crop} for each frame that differs from what's saved."""
+        return {k: v for k, v in self.work.items() if v != self.saved[k]}
+
+    def _on_canvas(self):
+        self.work[self.kind] = list(self.canvas.crop)
+        self._sync_controls()
+
+    def _sync_controls(self):
+        self.slider.blockSignals(True)
+        self.slider.setValue(round(self.canvas.crop[2] * 1000))
+        self.slider.blockSignals(False)
+        avatar = self._render(self.canvas.crop)
+        self.big.setPixmap(circular_pixmap(avatar, 168, ring=GOLD, dpr=self.devicePixelRatioF()))
+        self.small.setPixmap(circular_pixmap(avatar, 44, dpr=self.devicePixelRatioF()))
+
+    def _render(self, crop, px=256):
+        """Quick in-app version of catalog.render_avatar, for the live preview."""
+        out = QPixmap(px, px)
+        out.fill(Qt.GlobalColor.transparent)
+        p = QPainter(out)
+        p.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform)
+        if not self.backdrop.isNull():
+            p.drawPixmap(QRectF(0, 0, px, px), self.backdrop, QRectF(self.backdrop.rect()))
+        left, top, size = crop
+        w, h = self.src.width(), self.src.height()
+        # Draw the whole image, positioned so the crop square fills the output.
+        k = px / (size * w)
+        p.drawPixmap(QRectF(-left * w * k, -top * h * k, w * k, h * k), self.src, QRectF(self.src.rect()))
+        p.end()
+        return out
+
+
 class SendWorker(QThread):
     done = pyqtSignal(bool, str)
 
@@ -982,6 +1249,7 @@ class MainWindow(QMainWindow):
         menu = QMenu(menu_button)
         menu.addAction("Rescan portraits", lambda: self.resync(force=False))
         menu.addAction("Rebuild all avatars", lambda: self.resync(force=True))
+        menu.addAction("Edit framing…", self.edit_framing)
         menu.addSeparator()
         menu.addAction("Settings…", self.open_settings)
         menu.addSeparator()
@@ -1035,7 +1303,7 @@ class MainWindow(QMainWindow):
         self.sort_combo.setAccessibleName("Sort by")
         self.sort_combo.currentTextChanged.connect(lambda _: self.populate_roster())
         top.addWidget(self.title)
-        top.addWidget(self.count, 0, Qt.AlignmentFlag.AlignBottom)
+        top.addWidget(self.count, 0, Qt.AlignmentFlag.AlignVCenter)
         top.addStretch()
         top.addWidget(self.search)
         top.addWidget(label("Sort by", "muted", body_font(15)))
@@ -1178,7 +1446,18 @@ class MainWindow(QMainWindow):
 
         col.addSpacing(10)
         foot = QHBoxLayout()
-        foot.addWidget(label("Ctrl+Enter to send · drop images anywhere", "muted", body_font(14, italic=True)))
+        self.zoom_toggle = QCheckBox("Zoomed avatar")
+        self.zoom_toggle.setFont(body_font(15))
+        self.zoom_toggle.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.zoom_toggle.setChecked(self.ui_state.value("zoom", False, type=bool))
+        self.zoom_toggle.toggled.connect(lambda _: self.refresh_preview())
+        foot.addWidget(self.zoom_toggle)
+        self.framing_btn = QPushButton("Edit framing…")
+        self.framing_btn.setObjectName("ghost")
+        self.framing_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.framing_btn.setToolTip("Move or zoom this character's avatar and save it as the default")
+        self.framing_btn.clicked.connect(self.edit_framing)
+        foot.addWidget(self.framing_btn)
         foot.addStretch()
         self.counter = label("", "muted", body_font(14))
         foot.addWidget(self.counter)
@@ -1193,7 +1472,7 @@ class MainWindow(QMainWindow):
             self.nav_group.removeButton(b)
             b.deleteLater()
         entries = [(FAVORITES, f"Favorites  ({self.favorite_count()})", star_icon()),
-                   (ALL, "All factions", dot_icon(GOLD))]
+                   (ALL, "All Factions", dot_icon(GOLD))]
         for faction in sorted({c["faction"] for c in self.characters.values()}, key=faction_key):
             entries.append((faction, faction, dot_icon(FACTION_COLORS.get(faction, GOLD))))
         if self.mode not in [e[0] for e in entries]:
@@ -1219,10 +1498,19 @@ class MainWindow(QMainWindow):
             if b.property("mode") == FAVORITES:
                 b.setText(f"  Favorites  ({self.favorite_count()})")
 
-    def pixmap(self, cid):
-        if cid not in self.pixmaps:
-            self.pixmaps[cid] = QPixmap(str(catalog.AVATARS_DIR / self.characters[cid]["avatar"]))
-        return self.pixmaps[cid]
+    def pixmap(self, cid, zoomed=False):
+        key = (cid, zoomed)
+        if key not in self.pixmaps:
+            self.pixmaps[key] = QPixmap(str(catalog.AVATARS_DIR / self.avatar_path(cid, zoomed)))
+        return self.pixmaps[key]
+
+    def avatar_path(self, cid, zoomed):
+        """The avatar file to use: the close-up when asked for and the character has one."""
+        c = self.characters[cid]
+        return catalog.zoom_avatar(c) if zoomed and c.get("zoom") else c["avatar"]
+
+    def use_zoom(self, cid):
+        return bool(cid) and bool(self.characters[cid].get("zoom")) and self.zoom_toggle.isChecked()
 
     def populate_roster(self):
         content = QWidget()
@@ -1338,6 +1626,26 @@ class MainWindow(QMainWindow):
         self.profile.update()
         self.statusBar().showMessage(f"Default name saved: {name}", 4000)
 
+    def edit_framing(self):
+        cid = self.selected_cid
+        if not cid:
+            return QMessageBox.information(self, "Edit framing", "Pick a character first.")
+        c = self.characters[cid]
+        dialog = FramingDialog(self, c, "zoom" if self.use_zoom(cid) else "crop")
+        if dialog.exec() != QDialog.DialogCode.Accepted or not dialog.changes():
+            return
+        for kind, crop in dialog.changes().items():
+            c[kind] = crop
+            avatar = catalog.zoom_avatar(c) if kind == "zoom" else c["avatar"]
+            catalog.render_avatar(catalog.ROOT / c["source"], catalog.AVATARS_DIR / avatar, crop, c.get("background"))
+            self.pixmaps.pop((cid, kind == "zoom"), None)
+        catalog.save_characters(self.characters)
+        if cid in self.tiles:
+            self.tiles[cid].set_source(self.pixmap(cid))
+        self.refresh_preview()
+        self.statusBar().showMessage(
+            f"Framing saved for {c['name']}. Push avatars/ to GitHub so Discord shows it.", 8000)
+
     def resync(self, force):
         self.characters = run_sync(self, force)
         self.pixmaps.clear()
@@ -1395,18 +1703,25 @@ class MainWindow(QMainWindow):
                 when = sent.strftime("%b %d, ") + when
             images = last.get("images", 0)
             text = last["content"] + (f"\n[{images} image{'s' if images != 1 else ''}]" if images else "")
-            self.context_row.set_message(self.pixmap(last["cid"]), last["name"], f"Last sent here · {when}", text)
+            self.context_row.set_message(self.pixmap(last["cid"], last.get("zoom", False)), last["name"],
+                                         f"Last sent here · {when}", text)
             self.context_row.show()
         else:
             self.context_row.hide()
         self.context_hint.setVisible(self.context_row.isVisibleTo(self.context_row.parentWidget()))
 
         cid = self.selected_cid
-        self.profile.set_character(self.characters.get(cid), self.pixmap(cid) if cid else QPixmap())
+        zoomed = self.use_zoom(cid)
+        has_zoom = bool(cid) and bool(self.characters[cid].get("zoom"))
+        self.zoom_toggle.setEnabled(has_zoom)
+        self.framing_btn.setEnabled(bool(cid))
+        self.zoom_toggle.setToolTip("Post with a close-up of the face" if has_zoom
+                                    else "This character has no zoomed avatar")
+        self.profile.set_character(self.characters.get(cid), self.pixmap(cid, zoomed) if cid else QPixmap())
         self.message_row.setVisible(bool(cid))
         self.placeholder.setVisible(not cid)
         if cid:
-            self.message_row.set_message(self.pixmap(cid), self.name_edit.text().strip(),
+            self.message_row.set_message(self.pixmap(cid, zoomed), self.name_edit.text().strip(),
                                          f'{self.characters[cid]["faction"]} · unsent',
                                          self.message.toPlainText(), self.attachments, removable=True)
         n = len(self.message.toPlainText())
@@ -1439,9 +1754,9 @@ class MainWindow(QMainWindow):
         self.add_attachments([u.toLocalFile() for u in e.mimeData().urls() if u.isLocalFile()])
         e.acceptProposedAction()
 
-    def avatar_url(self, cid):
+    def avatar_url(self, cid, zoomed=False):
         base = self.settings.get("avatar_base_url", "").strip()
-        return f'{base.rstrip("/")}/{self.characters[cid]["avatar"]}' if base else None
+        return f'{base.rstrip("/")}/{self.avatar_path(cid, zoomed)}' if base else None
 
     def send(self):
         if self.worker and self.worker.isRunning():
@@ -1458,7 +1773,8 @@ class MainWindow(QMainWindow):
         if problems:
             return QMessageBox.warning(self, "Send", "\n".join(problems))
 
-        avatar = self.avatar_url(cid)
+        zoomed = self.use_zoom(cid)
+        avatar = self.avatar_url(cid, zoomed)
         if not avatar and not self.warned_no_avatar:
             answer = QMessageBox.question(
                 self, "No avatar URL",
@@ -1471,16 +1787,16 @@ class MainWindow(QMainWindow):
         self.send_btn.setEnabled(False)
         self.send_btn.setText("SENDING…")
         self.worker = SendWorker(self.channels[channel], content, username, avatar, files)
-        self.worker.done.connect(lambda ok, err: self.on_sent(ok, err, cid, username, channel, content, files))
+        self.worker.done.connect(lambda ok, err: self.on_sent(ok, err, cid, username, channel, content, files, zoomed))
         self.worker.start()
 
-    def on_sent(self, ok, err, cid, username, channel, content, files):
+    def on_sent(self, ok, err, cid, username, channel, content, files, zoomed=False):
         self.send_btn.setEnabled(True)
         self.send_btn.setText("SEAL && SEND")
         if not ok:
             return QMessageBox.critical(self, "Send failed", err)
-        self.history[channel] = {"cid": cid, "name": username, "content": content,
-                                 "images": len(files), "time": datetime.now().isoformat(timespec="seconds")}
+        self.history[channel] = {"cid": cid, "name": username, "content": content, "images": len(files),
+                                 "zoom": zoomed, "time": datetime.now().isoformat(timespec="seconds")}
         save_json(HISTORY_FILE, self.history)
         self.attachments.clear()
         self.message.clear()  # also refreshes the preview
@@ -1503,6 +1819,7 @@ class MainWindow(QMainWindow):
         self.ui_state.setValue("channel", self.pills.current())
         self.ui_state.setValue("character", self.selected_cid)
         self.ui_state.setValue("sort", self.sort_combo.currentText())
+        self.ui_state.setValue("zoom", self.zoom_toggle.isChecked())
         super().closeEvent(e)
 
 

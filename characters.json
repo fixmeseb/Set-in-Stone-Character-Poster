@@ -5,9 +5,15 @@
     "source": "Portraits/Bridal Party of the Pale Raven/FEFW_Nintendo_Today_Anatolia_profile.webp",
     "avatar": "bridal-party-of-the-pale-raven/anatolia.png",
     "crop": [
-      0.18,
-      0.0,
+      0.29,
+      0.003,
       0.5
+    ],
+    "order": 0,
+    "zoom": [
+      0.3714,
+      0.0359,
+      0.317
     ]
   },
   "bridal-party-of-the-pale-raven/dadao": {
@@ -19,6 +25,12 @@
       0.0,
       0.0,
       1.0
+    ],
+    "order": 3,
+    "zoom": [
+      0.2599,
+      0.0368,
+      0.55
     ]
   },
   "bridal-party-of-the-pale-raven/halvin": {
@@ -30,6 +42,12 @@
       0.0,
       0.0,
       1.0
+    ],
+    "order": 4,
+    "zoom": [
+      0.214,
+      0.0529,
+      0.58
     ]
   },
   "bridal-party-of-the-pale-raven/nezha": {
@@ -41,6 +59,12 @@
       0.0,
       0.0,
       1.0
+    ],
+    "order": 2,
+    "zoom": [
+      0.2332,
+      0.0287,
+      0.55
     ]
   },
   "bridal-party-of-the-pale-raven/sha-lan": {
@@ -52,6 +76,12 @@
       0.0,
       0.0,
       1.0
+    ],
+    "order": 1,
+    "zoom": [
+      0.225,
+      0.045,
+      0.55
     ]
   },
   "fiery-mane/bertrand": {
@@ -64,7 +94,12 @@
       0.0,
       0.5
     ],
-    "order": 0
+    "order": 0,
+    "zoom": [
+      0.3266,
+      0.0453,
+      0.3
+    ]
   },
   "fiery-mane/dante": {
     "name": "Dante",
@@ -76,7 +111,12 @@
       0.0,
       1.0
     ],
-    "order": 2
+    "order": 2,
+    "zoom": [
+      0.238,
+      0.0243,
+      0.525
+    ]
   },
   "fiery-mane/gaitz": {
     "name": "Gaitz",
@@ -88,7 +128,12 @@
       0.0,
       1.0
     ],
-    "order": 1
+    "order": 1,
+    "zoom": [
+      0.2035,
+      0.0341,
+      0.55
+    ]
   },
   "fiery-mane/goliath": {
     "name": "Goliath",
@@ -100,7 +145,12 @@
       0.0,
       1.0
     ],
-    "order": 3
+    "order": 3,
+    "zoom": [
+      0.2655,
+      0.0218,
+      0.55
+    ]
   },
   "fiery-mane/jester": {
     "name": "Jester",
@@ -112,7 +162,12 @@
       0.0,
       1.0
     ],
-    "order": 4
+    "order": 4,
+    "zoom": [
+      0.2776,
+      0.0041,
+      0.533
+    ]
   },
   "gods-of-dagda/aurora": {
     "name": "Aurora",
@@ -120,9 +175,15 @@
     "source": "Portraits/Gods of Dagda/Aurora.webp",
     "avatar": "gods-of-dagda/aurora.png",
     "crop": [
-      0.0,
-      0.0,
-      1.0
+      0.2383,
+      0.0763,
+      0.616
+    ],
+    "background": "#24373a",
+    "zoom": [
+      0.3525,
+      0.0965,
+      0.409
     ]
   },
   "gods-of-dagda/credna": {
@@ -134,6 +195,29 @@
       0.0,
       0.0,
       1.0
+    ],
+    "background": "#24373a",
+    "zoom": [
+      0.0049,
+      -0.0152,
+      0.851
+    ]
+  },
+  "gods-of-dagda/dagda": {
+    "name": "Dagda the Great",
+    "faction": "Gods of Dagda",
+    "source": "Portraits/Gods of Dagda/Medium_portrait_dagda_fe18.png",
+    "avatar": "gods-of-dagda/dagda.png",
+    "crop": [
+      -0.0252,
+      0.0839,
+      1.024
+    ],
+    "background": "#24373a",
+    "zoom": [
+      0.0482,
+      0.0988,
+      0.877
     ]
   },
   "gods-of-dagda/fortuna": {
@@ -142,9 +226,15 @@
     "source": "Portraits/Gods of Dagda/Fortuna.webp",
     "avatar": "gods-of-dagda/fortuna.png",
     "crop": [
-      0.0,
-      0.0,
-      1.0
+      0.1627,
+      0.2057,
+      0.552
+    ],
+    "background": "#24373a",
+    "zoom": [
+      0.2592,
+      0.281,
+      0.37
     ]
   },
   "gods-of-dagda/jurah": {
@@ -156,6 +246,12 @@
       0.0,
       0.0,
       1.0
+    ],
+    "background": "#24373a",
+    "zoom": [
+      0.0779,
+      0.1027,
+      0.747
     ]
   },
   "gods-of-dagda/kalla": {
@@ -167,6 +263,11 @@
       0.0,
       0.0,
       1.0
+    ],
+    "zoom": [
+      0.2339,
+      0.0529,
+      0.562
     ]
   },
   "gods-of-dagda/mars": {
@@ -175,9 +276,15 @@
     "source": "Portraits/Gods of Dagda/Mars.webp",
     "avatar": "gods-of-dagda/mars.png",
     "crop": [
-      0.0,
-      0.0,
-      1.0
+      0.0764,
+      -0.0093,
+      0.82
+    ],
+    "background": "#24373a",
+    "zoom": [
+      0.1752,
+      0.0078,
+      0.625
     ]
   },
   "gods-of-dagda/smyrnos": {
@@ -189,6 +296,12 @@
       0.0,
       0.0,
       1.0
+    ],
+    "background": "#24373a",
+    "zoom": [
+      0.1094,
+      0.0386,
+      0.784
     ]
   },
   "gods-of-dagda/solel": {
@@ -197,9 +310,31 @@
     "source": "Portraits/Gods of Dagda/Solel Portrait.webp",
     "avatar": "gods-of-dagda/solel.png",
     "crop": [
-      0.0,
-      0.0,
-      1.0
+      0.0679,
+      0.0025,
+      0.737
+    ],
+    "background": "#24373a",
+    "zoom": [
+      0.1616,
+      0.006,
+      0.568
+    ]
+  },
+  "gods-of-dagda/sothis": {
+    "name": "Sothis",
+    "faction": "Gods of Dagda",
+    "source": "Portraits/Gods of Dagda/mom1tmbfh3sf1.jpeg",
+    "avatar": "gods-of-dagda/sothis.png",
+    "crop": [
+      0.3513,
+      0.0282,
+      0.504
+    ],
+    "zoom": [
+      0.435,
+      0.0599,
+      0.379
     ]
   },
   "gods-of-dagda/yu-phas": {
@@ -208,9 +343,31 @@
     "source": "Portraits/Gods of Dagda/Yu Phas.webp",
     "avatar": "gods-of-dagda/yu-phas.png",
     "crop": [
-      0.2188,
-      0.0,
-      0.5625
+      0.3443,
+      -0.014,
+      0.336
+    ],
+    "zoom": [
+      0.3986,
+      0.0539,
+      0.23
+    ]
+  },
+  "gods-of-dagda/yu-phas-2": {
+    "name": "Yu Phas",
+    "faction": "Gods of Dagda",
+    "source": "Portraits/Gods of Dagda/Artwork_Yu_Phas.webp",
+    "avatar": "gods-of-dagda/yu-phas-2.png",
+    "crop": [
+      0.1651,
+      0.049,
+      0.655
+    ],
+    "background": "#24373a",
+    "zoom": [
+      0.2496,
+      0.0622,
+      0.501
     ]
   },
   "house-lamine/dietrich": {
@@ -223,7 +380,12 @@
       0.013,
       0.5
     ],
-    "order": 0
+    "order": 0,
+    "zoom": [
+      0.3527,
+      0.0658,
+      0.24
+    ]
   },
   "house-lamine/esmeralda": {
     "name": "Esmeralda",
@@ -235,7 +397,12 @@
       0.0,
       1.0
     ],
-    "order": 2
+    "order": 2,
+    "zoom": [
+      0.2205,
+      0.0343,
+      0.58
+    ]
   },
   "house-lamine/fabio": {
     "name": "Fabio",
@@ -247,7 +414,12 @@
       0.0,
       1.0
     ],
-    "order": 1
+    "order": 1,
+    "zoom": [
+      0.2139,
+      0.0584,
+      0.555
+    ]
   },
   "house-lamine/mikaela": {
     "name": "Mikaela",
@@ -259,7 +431,12 @@
       0.0,
       1.0
     ],
-    "order": 3
+    "order": 3,
+    "zoom": [
+      0.17,
+      0.0345,
+      0.635
+    ]
   },
   "kingdom-of-arago/aswan": {
     "name": "Aswan",
@@ -267,9 +444,14 @@
     "source": "Portraits/Kingdom of Arago/AswanFE18Portrait.webp",
     "avatar": "kingdom-of-arago/aswan.png",
     "crop": [
-      0.0,
+      -0.06,
       0.0,
       1.0
+    ],
+    "zoom": [
+      0.0041,
+      -0.0211,
+      0.822
     ]
   },
   "kingdom-of-arago/creek": {
@@ -281,6 +463,11 @@
       0.0,
       0.0,
       1.0
+    ],
+    "zoom": [
+      0.1448,
+      0.0401,
+      0.629
     ]
   },
   "kingdom-of-arago/nathan": {
@@ -292,6 +479,11 @@
       0.0,
       0.0,
       1.0
+    ],
+    "zoom": [
+      0.2786,
+      0.0533,
+      0.5
     ]
   },
   "linarias-dewdrops/diego": {
@@ -304,7 +496,12 @@
       0.0,
       1.0
     ],
-    "order": 1
+    "order": 1,
+    "zoom": [
+      0.2614,
+      0.0497,
+      0.5
+    ]
   },
   "linarias-dewdrops/loretta": {
     "name": "Loretta",
@@ -316,7 +513,12 @@
       0.0,
       1.0
     ],
-    "order": 2
+    "order": 2,
+    "zoom": [
+      0.2342,
+      0.0403,
+      0.5
+    ]
   },
   "linarias-dewdrops/ninae": {
     "name": "Ninae",
@@ -328,7 +530,12 @@
       0.0,
       1.0
     ],
-    "order": 3
+    "order": 3,
+    "zoom": [
+      0.2535,
+      0.0423,
+      0.48
+    ]
   },
   "linarias-dewdrops/orchel": {
     "name": "Orchel",
@@ -340,7 +547,12 @@
       0.046,
       0.5
     ],
-    "order": 0
+    "order": 0,
+    "zoom": [
+      0.3659,
+      0.0678,
+      0.22
+    ]
   },
   "linarias-dewdrops/seteth": {
     "name": "Seteth",
@@ -348,11 +560,16 @@
     "source": "Portraits/Linaria's Dewdrops/FEFW_Nintendo_Today_Seteth_profile.webp",
     "avatar": "linarias-dewdrops/seteth.png",
     "crop": [
-      0.27,
+      0.36,
       0.0,
-      0.5
+      0.44
     ],
-    "order": 4
+    "order": 4,
+    "zoom": [
+      0.4927,
+      0.0413,
+      0.22
+    ]
   },
   "megairas-beacon/bonaventure": {
     "name": "Bonaventure",
@@ -364,7 +581,12 @@
       0.0,
       1.0
     ],
-    "order": 1
+    "order": 1,
+    "zoom": [
+      0.2685,
+      0.0418,
+      0.5
+    ]
   },
   "megairas-beacon/lilian": {
     "name": "Lilian",
@@ -376,7 +598,12 @@
       0.0,
       1.0
     ],
-    "order": 3
+    "order": 3,
+    "zoom": [
+      0.1744,
+      0.0401,
+      0.59
+    ]
   },
   "megairas-beacon/lysander": {
     "name": "Lysander",
@@ -388,7 +615,12 @@
       0.0,
       1.0
     ],
-    "order": 4
+    "order": 4,
+    "zoom": [
+      0.1869,
+      -0.0102,
+      0.627
+    ]
   },
   "megairas-beacon/theodora": {
     "name": "Theodora",
@@ -396,11 +628,16 @@
     "source": "Portraits/Megaira's Beacon/FEFW_Nintendo_Today_Theodora_profile.webp.png",
     "avatar": "megairas-beacon/theodora.png",
     "crop": [
-      0.18,
-      0.033,
+      0.26,
+      0.056,
       0.5
     ],
-    "order": 0
+    "order": 0,
+    "zoom": [
+      0.3542,
+      0.0881,
+      0.298
+    ]
   },
   "megairas-beacon/tobias": {
     "name": "Tobias",
@@ -412,7 +649,12 @@
       0.0,
       1.0
     ],
-    "order": 2
+    "order": 2,
+    "zoom": [
+      0.2294,
+      0.027,
+      0.5
+    ]
   },
   "ribeira-winds/cai": {
     "name": "Cai",
@@ -420,11 +662,16 @@
     "source": "Portraits/Ribeira Winds/FEFW_Nintendo_Today_Cai_profile.webp.png",
     "avatar": "ribeira-winds/cai.png",
     "crop": [
-      0.1,
-      0.0,
-      0.5
+      0.1618,
+      0.0247,
+      0.458
     ],
-    "order": 0
+    "order": 0,
+    "zoom": [
+      0.2163,
+      0.0565,
+      0.28
+    ]
   },
   "ribeira-winds/peter": {
     "name": "Peter",
@@ -436,7 +683,12 @@
       0.0,
       1.0
     ],
-    "order": 2
+    "order": 2,
+    "zoom": [
+      0.2796,
+      0.0541,
+      0.49
+    ]
   },
   "ribeira-winds/tialla": {
     "name": "Tialla",
@@ -448,7 +700,12 @@
       0.0,
       1.0
     ],
-    "order": 1
+    "order": 1,
+    "zoom": [
+      0.2189,
+      0.0651,
+      0.525
+    ]
   },
   "ribeira-winds/ultand": {
     "name": "Ultand",
@@ -460,7 +717,12 @@
       0.0,
       1.0
     ],
-    "order": 3
+    "order": 3,
+    "zoom": [
+      0.2435,
+      0.0218,
+      0.521
+    ]
   },
   "rose-tempest/buccar": {
     "name": "Buccar",
@@ -472,7 +734,12 @@
       0.0,
       1.0
     ],
-    "order": 1
+    "order": 1,
+    "zoom": [
+      0.2358,
+      0.052,
+      0.5
+    ]
   },
   "rose-tempest/leda": {
     "name": "Leda",
@@ -480,11 +747,16 @@
     "source": "Portraits/Rose Tempest/FEFW_Nintendo_Today_Leda_profile.webp.png",
     "avatar": "rose-tempest/leda.png",
     "crop": [
-      0.2,
+      0.22,
       0.013,
       0.5
     ],
-    "order": 0
+    "order": 0,
+    "zoom": [
+      0.3686,
+      0.0303,
+      0.299
+    ]
   },
   "rose-tempest/mu": {
     "name": "Mu",
@@ -496,7 +768,12 @@
       0.0,
       1.0
     ],
-    "order": 3
+    "order": 3,
+    "zoom": [
+      0.2573,
+      0.0386,
+      0.48
+    ]
   },
   "rose-tempest/olympia": {
     "name": "Olympia",
@@ -508,7 +785,12 @@
       0.0,
       1.0
     ],
-    "order": 4
+    "order": 4,
+    "zoom": [
+      0.1715,
+      0.0003,
+      0.58
+    ]
   },
   "rose-tempest/sirocco": {
     "name": "Sirocco",
@@ -520,7 +802,12 @@
       0.0,
       1.0
     ],
-    "order": 2
+    "order": 2,
+    "zoom": [
+      0.2457,
+      0.0676,
+      0.48
+    ]
   },
   "tale-of-the-moon/fianna": {
     "name": "Fianna",
@@ -532,7 +819,12 @@
       0.0,
       1.0
     ],
-    "order": 2
+    "order": 2,
+    "zoom": [
+      0.2668,
+      0.0653,
+      0.48
+    ]
   },
   "tale-of-the-moon/ludia": {
     "name": "Ludia",
@@ -544,7 +836,12 @@
       0.0,
       1.0
     ],
-    "order": 3
+    "order": 3,
+    "zoom": [
+      0.2114,
+      0.0104,
+      0.58
+    ]
   },
   "tale-of-the-moon/simon": {
     "name": "Simon",
@@ -556,7 +853,12 @@
       0.0,
       1.0
     ],
-    "order": 4
+    "order": 4,
+    "zoom": [
+      0.1659,
+      0.0619,
+      0.5
+    ]
   },
   "tale-of-the-moon/talimun": {
     "name": "Talimun",
@@ -564,11 +866,16 @@
     "source": "Portraits/Tale of the Moon/FEFW_Nintendo_Today_Talimun_profile.webp.png",
     "avatar": "tale-of-the-moon/talimun.png",
     "crop": [
-      0.27,
+      0.285,
       0.0,
       0.5
     ],
-    "order": 0
+    "order": 0,
+    "zoom": [
+      0.4165,
+      0.0288,
+      0.25
+    ]
   },
   "tale-of-the-moon/ursula": {
     "name": "Ursula",
@@ -580,7 +887,12 @@
       0.0,
       1.0
     ],
-    "order": 1
+    "order": 1,
+    "zoom": [
+      0.2199,
+      0.0274,
+      0.568
+    ]
   },
   "temple-army/anna": {
     "name": "Anna",
@@ -592,7 +904,12 @@
       0.0,
       1.0
     ],
-    "order": 1
+    "order": 1,
+    "zoom": [
+      0.2297,
+      0.0344,
+      0.584
+    ]
   },
   "temple-army/centurio": {
     "name": "Centurio",
@@ -604,7 +921,12 @@
       0.0,
       1.0
     ],
-    "order": 0
+    "order": 0,
+    "zoom": [
+      0.261,
+      0.0664,
+      0.5
+    ]
   },
   "temple-army/sofia": {
     "name": "Sofia",
@@ -616,7 +938,12 @@
       0.0,
       1.0
     ],
-    "order": 2
+    "order": 2,
+    "zoom": [
+      0.1478,
+      0.0488,
+      0.668
+    ]
   },
   "unaffiliated/alexandra": {
     "name": "Alexandra",
@@ -627,6 +954,11 @@
       0.0,
       0.0,
       1.0
+    ],
+    "zoom": [
+      0.1915,
+      0.0457,
+      0.608
     ]
   },
   "unaffiliated/bahr-vahn": {
@@ -638,6 +970,11 @@
       0.0,
       0.0,
       1.0
+    ],
+    "zoom": [
+      0.1097,
+      0.0241,
+      0.85
     ]
   },
   "unaffiliated/benditz": {
@@ -649,6 +986,11 @@
       0.0,
       0.0,
       1.0
+    ],
+    "zoom": [
+      0.2432,
+      0.0541,
+      0.5
     ]
   },
   "unaffiliated/catania": {
@@ -660,6 +1002,11 @@
       0.0,
       0.0,
       1.0
+    ],
+    "zoom": [
+      0.1933,
+      0.0197,
+      0.58
     ]
   },
   "unaffiliated/guzran": {
@@ -671,6 +1018,11 @@
       0.0,
       0.0,
       1.0
+    ],
+    "zoom": [
+      0.2649,
+      0.0477,
+      0.5
     ]
   },
   "unaffiliated/inyoni": {
@@ -682,6 +1034,11 @@
       0.0,
       0.0,
       1.0
+    ],
+    "zoom": [
+      0.256,
+      0.056,
+      0.48
     ]
   },
   "unaffiliated/io": {
@@ -693,6 +1050,11 @@
       0.0,
       0.0,
       1.0
+    ],
+    "zoom": [
+      0.2491,
+      0.0617,
+      0.48
     ]
   },
   "unaffiliated/jasmine": {
@@ -704,6 +1066,11 @@
       0.0,
       0.0,
       1.0
+    ],
+    "zoom": [
+      0.2527,
+      0.0636,
+      0.5
     ]
   },
   "unaffiliated/kiroc": {
@@ -715,6 +1082,11 @@
       0.0,
       0.0,
       1.0
+    ],
+    "zoom": [
+      0.1258,
+      0.0963,
+      0.5
     ]
   },
   "unaffiliated/majide": {
@@ -726,6 +1098,11 @@
       0.0,
       0.0,
       1.0
+    ],
+    "zoom": [
+      0.2291,
+      0.0463,
+      0.5
     ]
   },
   "unaffiliated/noctula": {
@@ -737,6 +1114,11 @@
       0.0,
       0.0,
       1.0
+    ],
+    "zoom": [
+      0.2464,
+      0.0437,
+      0.48
     ]
   },
   "unaffiliated/nuzzuo": {
@@ -748,6 +1130,11 @@
       0.0,
       0.0,
       1.0
+    ],
+    "zoom": [
+      0.2384,
+      0.0395,
+      0.54
     ]
   },
   "unaffiliated/nydine": {
@@ -759,6 +1146,11 @@
       0.0,
       0.0,
       1.0
+    ],
+    "zoom": [
+      0.2325,
+      0.0597,
+      0.565
     ]
   },
   "unaffiliated/peppe": {
@@ -770,6 +1162,11 @@
       0.0,
       0.0,
       1.0
+    ],
+    "zoom": [
+      0.1957,
+      0.0522,
+      0.574
     ]
   },
   "unaffiliated/yang-jie": {
@@ -781,6 +1178,11 @@
       0.0,
       0.0,
       1.0
+    ],
+    "zoom": [
+      0.2222,
+      0.0818,
+      0.5
     ]
   },
   "unaffiliated/zarcone": {
@@ -792,6 +1194,11 @@
       0.0,
       0.0,
       1.0
+    ],
+    "zoom": [
+      0.2172,
+      0.0813,
+      0.5
     ]
   }
 }
