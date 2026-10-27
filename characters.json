@@ -827,6 +827,18 @@
     ],
     "campaign": "Fortune's Weave"
   },
+  "oasis-server/kiris/pony-sketch": {
+    "name": "Anneliese Barnett",
+    "faction": "Kiris",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Kiris/Pony_Sketch.png",
+    "avatar": "oasis-server/kiris/pony-sketch.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
   "oasis-server/kiris/eijiro-kirishima": {
     "name": "Eijiro Kirishima",
     "faction": "Kiris",
@@ -839,56 +851,8 @@
       1.0
     ]
   },
-  "oasis-server/kiris/images": {
-    "name": "images",
-    "faction": "Kiris",
-    "campaign": "OASIS Server",
-    "source": "Portraits/OASIS Server/Kiris/images.jpg",
-    "avatar": "oasis-server/kiris/images.png",
-    "crop": [
-      0.0,
-      0.0,
-      1.0
-    ]
-  },
-  "oasis-server/kiris/images-steamusercontent": {
-    "name": "images.steamusercontent",
-    "faction": "Kiris",
-    "campaign": "OASIS Server",
-    "source": "Portraits/OASIS Server/Kiris/images.steamusercontent.jpg",
-    "avatar": "oasis-server/kiris/images-steamusercontent.png",
-    "crop": [
-      0.0,
-      0.0,
-      1.0
-    ]
-  },
-  "oasis-server/kiris/izuku-sketch-nei": {
-    "name": "Izuku Sketch Nei",
-    "faction": "Kiris",
-    "campaign": "OASIS Server",
-    "source": "Portraits/OASIS Server/Kiris/Izuku_Sketch_Nei.png",
-    "avatar": "oasis-server/kiris/izuku-sketch-nei.png",
-    "crop": [
-      0.0,
-      0.0,
-      1.0
-    ]
-  },
-  "oasis-server/kiris/kendo-final": {
-    "name": "Kendo Final",
-    "faction": "Kiris",
-    "campaign": "OASIS Server",
-    "source": "Portraits/OASIS Server/Kiris/Kendo Final.png",
-    "avatar": "oasis-server/kiris/kendo-final.png",
-    "crop": [
-      0.0,
-      0.0,
-      1.0
-    ]
-  },
   "oasis-server/kiris/kendo-sketch": {
-    "name": "Kendo Sketch",
+    "name": "Hailey Graves",
     "faction": "Kiris",
     "campaign": "OASIS Server",
     "source": "Portraits/OASIS Server/Kiris/Kendo_Sketch.png",
@@ -899,36 +863,63 @@
       1.0
     ]
   },
-  "oasis-server/kiris/kodai-sketch": {
-    "name": "Kodai Sketch",
+  "oasis-server/kiris/kendo-final": {
+    "name": "Itsuka Kendo",
     "faction": "Kiris",
     "campaign": "OASIS Server",
-    "source": "Portraits/OASIS Server/Kiris/Kodai_Sketch.png",
-    "avatar": "oasis-server/kiris/kodai-sketch.png",
+    "source": "Portraits/OASIS Server/Kiris/Kendo Final.png",
+    "avatar": "oasis-server/kiris/kendo-final.png",
     "crop": [
-      0.0,
-      0.0,
+      0.2573,
+      0.0068,
+      0.751
+    ],
+    "zoom": [
+      0.4626,
+      -0.0013,
+      0.5
+    ]
+  },
+  "oasis-server/kiris/izuku-sketch-nei": {
+    "name": "Izuku Midoriya",
+    "faction": "Kiris",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Kiris/Izuku_Sketch_Nei.png",
+    "avatar": "oasis-server/kiris/izuku-sketch-nei.png",
+    "crop": [
+      -0.1274,
+      -0.0299,
+      1.318
+    ],
+    "zoom": [
+      0.0246,
+      -0.0181,
       1.0
     ]
   },
   "oasis-server/kiris/lapis-by-rebecca-sugar": {
-    "name": "Lapis by Rebecca Sugar",
+    "name": "Lapis Lazuli",
     "faction": "Kiris",
     "campaign": "OASIS Server",
     "source": "Portraits/OASIS Server/Kiris/Lapis_by_Rebecca_Sugar.webp",
     "avatar": "oasis-server/kiris/lapis-by-rebecca-sugar.png",
     "crop": [
-      0.0,
-      0.0,
-      1.0
+      0.0294,
+      0.0844,
+      0.601
+    ],
+    "zoom": [
+      0.0891,
+      0.09,
+      0.432
     ]
   },
-  "oasis-server/kiris/momo-sketch-nei": {
-    "name": "Momo Sketch Nei",
+  "oasis-server/kiris/images-steamusercontent": {
+    "name": "Merrick Ateman",
     "faction": "Kiris",
     "campaign": "OASIS Server",
-    "source": "Portraits/OASIS Server/Kiris/Momo_Sketch_Nei.png",
-    "avatar": "oasis-server/kiris/momo-sketch-nei.png",
+    "source": "Portraits/OASIS Server/Kiris/images.steamusercontent.jpg",
+    "avatar": "oasis-server/kiris/images-steamusercontent.png",
     "crop": [
       0.0,
       0.0,
@@ -952,20 +943,54 @@
       0.321
     ]
   },
-  "oasis-server/kiris/pony-sketch": {
-    "name": "Pony Sketch",
+  "oasis-server/kiris/images": {
+    "name": "Peridot2",
     "faction": "Kiris",
     "campaign": "OASIS Server",
-    "source": "Portraits/OASIS Server/Kiris/Pony_Sketch.png",
-    "avatar": "oasis-server/kiris/pony-sketch.png",
+    "source": "Portraits/OASIS Server/Kiris/images.jpg",
+    "avatar": "oasis-server/kiris/images.png",
+    "crop": [
+      0.0513,
+      0.0196,
+      0.92
+    ],
+    "zoom": [
+      0.1864,
+      0.0952,
+      0.698
+    ]
+  },
+  "oasis-server/kiris/kodai-sketch": {
+    "name": "Rae Kerr",
+    "faction": "Kiris",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Kiris/Kodai_Sketch.png",
+    "avatar": "oasis-server/kiris/kodai-sketch.png",
     "crop": [
       0.0,
       0.0,
       1.0
     ]
   },
+  "oasis-server/kiris/momo-sketch-nei": {
+    "name": "Robin Foster",
+    "faction": "Kiris",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Kiris/Momo_Sketch_Nei.png",
+    "avatar": "oasis-server/kiris/momo-sketch-nei.png",
+    "crop": [
+      0.0213,
+      0.0439,
+      1.0
+    ],
+    "zoom": [
+      0.2606,
+      0.1724,
+      0.556
+    ]
+  },
   "oasis-server/kiris/setsuna": {
-    "name": "Setsuna",
+    "name": "Setsuna Tokage",
     "faction": "Kiris",
     "campaign": "OASIS Server",
     "source": "Portraits/OASIS Server/Kiris/Setsuna.webp",
