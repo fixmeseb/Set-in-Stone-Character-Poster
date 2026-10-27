@@ -2,7 +2,7 @@
   "bridal-party-of-the-pale-raven/anatolia": {
     "name": "Anatolia",
     "faction": "Bridal Party of the Pale Raven",
-    "source": "Portraits/Bridal Party of the Pale Raven/FEFW_Nintendo_Today_Anatolia_profile.webp",
+    "source": "Portraits/Fortune's Weave/Bridal Party of the Pale Raven/FEFW_Nintendo_Today_Anatolia_profile.webp",
     "avatar": "bridal-party-of-the-pale-raven/anatolia.png",
     "crop": [
       0.29,
@@ -14,12 +14,13 @@
       0.3714,
       0.0359,
       0.317
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "bridal-party-of-the-pale-raven/dadao": {
     "name": "Dadao",
     "faction": "Bridal Party of the Pale Raven",
-    "source": "Portraits/Bridal Party of the Pale Raven/FEFW_Nintendo_Today_Dadao_profile.webp",
+    "source": "Portraits/Fortune's Weave/Bridal Party of the Pale Raven/FEFW_Nintendo_Today_Dadao_profile.webp",
     "avatar": "bridal-party-of-the-pale-raven/dadao.png",
     "crop": [
       0.0,
@@ -28,15 +29,16 @@
     ],
     "order": 3,
     "zoom": [
-      0.2599,
-      0.0368,
-      0.55
-    ]
+      0.2877,
+      0.0265,
+      0.498
+    ],
+    "campaign": "Fortune's Weave"
   },
   "bridal-party-of-the-pale-raven/halvin": {
     "name": "Halvin",
     "faction": "Bridal Party of the Pale Raven",
-    "source": "Portraits/Bridal Party of the Pale Raven/FEFW_Nintendo_Today_Halvin_profile.webp",
+    "source": "Portraits/Fortune's Weave/Bridal Party of the Pale Raven/FEFW_Nintendo_Today_Halvin_profile.webp",
     "avatar": "bridal-party-of-the-pale-raven/halvin.png",
     "crop": [
       0.0,
@@ -48,12 +50,13 @@
       0.214,
       0.0529,
       0.58
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "bridal-party-of-the-pale-raven/nezha": {
     "name": "Nezha",
     "faction": "Bridal Party of the Pale Raven",
-    "source": "Portraits/Bridal Party of the Pale Raven/FEFW_Nintendo_Today_Nezha_profile.webp",
+    "source": "Portraits/Fortune's Weave/Bridal Party of the Pale Raven/FEFW_Nintendo_Today_Nezha_profile.webp",
     "avatar": "bridal-party-of-the-pale-raven/nezha.png",
     "crop": [
       0.0,
@@ -65,12 +68,13 @@
       0.2332,
       0.0287,
       0.55
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "bridal-party-of-the-pale-raven/sha-lan": {
     "name": "Sha Lan",
     "faction": "Bridal Party of the Pale Raven",
-    "source": "Portraits/Bridal Party of the Pale Raven/FEFW_Nintendo_Today_Sha_Lan_profile.webp",
+    "source": "Portraits/Fortune's Weave/Bridal Party of the Pale Raven/FEFW_Nintendo_Today_Sha_Lan_profile.webp",
     "avatar": "bridal-party-of-the-pale-raven/sha-lan.png",
     "crop": [
       0.0,
@@ -82,12 +86,13 @@
       0.225,
       0.045,
       0.55
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "fiery-mane/bertrand": {
     "name": "Bertrand",
     "faction": "Fiery Mane",
-    "source": "Portraits/Fiery Mane/FEFW_Nintendo_Today_Bertrand_profile.webp",
+    "source": "Portraits/Fortune's Weave/Fiery Mane/FEFW_Nintendo_Today_Bertrand_profile.webp",
     "avatar": "fiery-mane/bertrand.png",
     "crop": [
       0.22,
@@ -99,12 +104,13 @@
       0.3266,
       0.0453,
       0.3
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "fiery-mane/dante": {
     "name": "Dante",
     "faction": "Fiery Mane",
-    "source": "Portraits/Fiery Mane/FEFW_Nintendo_Today_Dante_profile.webp",
+    "source": "Portraits/Fortune's Weave/Fiery Mane/FEFW_Nintendo_Today_Dante_profile.webp",
     "avatar": "fiery-mane/dante.png",
     "crop": [
       0.0,
@@ -116,12 +122,13 @@
       0.238,
       0.0243,
       0.525
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "fiery-mane/gaitz": {
     "name": "Gaitz",
     "faction": "Fiery Mane",
-    "source": "Portraits/Fiery Mane/FEFW_Nintendo_Today_Gaitz_profile.webp",
+    "source": "Portraits/Fortune's Weave/Fiery Mane/FEFW_Nintendo_Today_Gaitz_profile.webp",
     "avatar": "fiery-mane/gaitz.png",
     "crop": [
       0.0,
@@ -133,12 +140,13 @@
       0.2035,
       0.0341,
       0.55
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "fiery-mane/goliath": {
     "name": "Goliath",
     "faction": "Fiery Mane",
-    "source": "Portraits/Fiery Mane/FEFW_Nintendo_Today_Goliath_profile.webp",
+    "source": "Portraits/Fortune's Weave/Fiery Mane/FEFW_Nintendo_Today_Goliath_profile.webp",
     "avatar": "fiery-mane/goliath.png",
     "crop": [
       0.0,
@@ -150,12 +158,13 @@
       0.2655,
       0.0218,
       0.55
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "fiery-mane/jester": {
     "name": "Jester",
     "faction": "Fiery Mane",
-    "source": "Portraits/Fiery Mane/FEFW_Nintendo_Today_Jester_profile.webp",
+    "source": "Portraits/Fortune's Weave/Fiery Mane/FEFW_Nintendo_Today_Jester_profile.webp",
     "avatar": "fiery-mane/jester.png",
     "crop": [
       0.0,
@@ -167,13 +176,51 @@
       0.2776,
       0.0041,
       0.533
+    ],
+    "campaign": "Fortune's Weave"
+  },
+  "oasis-server/friends/4d478a578f867dc05f291aa5b5309e2a": {
+    "name": "4d478a578f867dc05f291aa5b5309e2a",
+    "faction": "Friends",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Friends/4d478a578f867dc05f291aa5b5309e2a.webp",
+    "avatar": "oasis-server/friends/4d478a578f867dc05f291aa5b5309e2a.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "oasis-server/friends/aka-r": {
+    "name": "aka r",
+    "faction": "Friends",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Friends/aka_r.webp",
+    "avatar": "oasis-server/friends/aka-r.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
     ]
   },
   "friends/aka-r": {
     "name": "aka_r",
     "faction": "Friends",
-    "source": "Portraits/Friends/aka_r.webp",
+    "source": "Portraits/Fortune's Weave/Friends/aka_r.webp",
     "avatar": "friends/aka-r.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "campaign": "Fortune's Weave"
+  },
+  "oasis-server/friends/b1e56ef55f3792f5f7143095787ececb": {
+    "name": "b1e56ef55f3792f5f7143095787ececb",
+    "faction": "Friends",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Friends/b1e56ef55f3792f5f7143095787ececb.webp",
+    "avatar": "oasis-server/friends/b1e56ef55f3792f5f7143095787ececb.png",
     "crop": [
       0.0,
       0.0,
@@ -183,8 +230,21 @@
   "friends/drop-of-jello": {
     "name": "Drop of Jello",
     "faction": "Friends",
-    "source": "Portraits/Friends/Drop_of_Jello.webp",
+    "source": "Portraits/Fortune's Weave/Friends/Drop_of_Jello.webp",
     "avatar": "friends/drop-of-jello.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "campaign": "Fortune's Weave"
+  },
+  "oasis-server/friends/drop-of-jello": {
+    "name": "Drop of Jello",
+    "faction": "Friends",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Friends/Drop_of_Jello.webp",
+    "avatar": "oasis-server/friends/drop-of-jello.png",
     "crop": [
       0.0,
       0.0,
@@ -194,8 +254,21 @@
   "friends/duodragon": {
     "name": "duodragon",
     "faction": "Friends",
-    "source": "Portraits/Friends/duodragon.webp",
+    "source": "Portraits/Fortune's Weave/Friends/duodragon.webp",
     "avatar": "friends/duodragon.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "campaign": "Fortune's Weave"
+  },
+  "oasis-server/friends/duodragon": {
+    "name": "duodragon",
+    "faction": "Friends",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Friends/duodragon.webp",
+    "avatar": "oasis-server/friends/duodragon.png",
     "crop": [
       0.0,
       0.0,
@@ -205,8 +278,21 @@
   "friends/farosh": {
     "name": "Farosh",
     "faction": "Friends",
-    "source": "Portraits/Friends/Farosh.webp",
+    "source": "Portraits/Fortune's Weave/Friends/Farosh.webp",
     "avatar": "friends/farosh.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "campaign": "Fortune's Weave"
+  },
+  "oasis-server/friends/farosh": {
+    "name": "Farosh",
+    "faction": "Friends",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Friends/Farosh.webp",
+    "avatar": "oasis-server/friends/farosh.png",
     "crop": [
       0.0,
       0.0,
@@ -216,8 +302,21 @@
   "friends/grimlock": {
     "name": "Grimlock",
     "faction": "Friends",
-    "source": "Portraits/Friends/Grimlock.webp",
+    "source": "Portraits/Fortune's Weave/Friends/Grimlock.webp",
     "avatar": "friends/grimlock.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "campaign": "Fortune's Weave"
+  },
+  "oasis-server/friends/grimlock": {
+    "name": "Grimlock",
+    "faction": "Friends",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Friends/Grimlock.webp",
+    "avatar": "oasis-server/friends/grimlock.png",
     "crop": [
       0.0,
       0.0,
@@ -227,8 +326,21 @@
   "friends/haymaker": {
     "name": "haymaker",
     "faction": "Friends",
-    "source": "Portraits/Friends/haymaker.webp",
+    "source": "Portraits/Fortune's Weave/Friends/haymaker.webp",
     "avatar": "friends/haymaker.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "campaign": "Fortune's Weave"
+  },
+  "oasis-server/friends/haymaker": {
+    "name": "haymaker",
+    "faction": "Friends",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Friends/haymaker.webp",
+    "avatar": "oasis-server/friends/haymaker.png",
     "crop": [
       0.0,
       0.0,
@@ -238,8 +350,33 @@
   "friends/minerharry": {
     "name": "minerharry",
     "faction": "Friends",
-    "source": "Portraits/Friends/minerharry.webp",
+    "source": "Portraits/Fortune's Weave/Friends/minerharry.webp",
     "avatar": "friends/minerharry.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "campaign": "Fortune's Weave"
+  },
+  "oasis-server/friends/minerharry": {
+    "name": "minerharry",
+    "faction": "Friends",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Friends/minerharry.webp",
+    "avatar": "oasis-server/friends/minerharry.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "oasis-server/friends/neii-neii": {
+    "name": "Neii Neii",
+    "faction": "Friends",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Friends/NeiiNeii.webp",
+    "avatar": "oasis-server/friends/neii-neii.png",
     "crop": [
       0.0,
       0.0,
@@ -249,19 +386,45 @@
   "friends/neii-neii": {
     "name": "NeiiNeii",
     "faction": "Friends",
-    "source": "Portraits/Friends/NeiiNeii.webp",
+    "source": "Portraits/Fortune's Weave/Friends/NeiiNeii.webp",
     "avatar": "friends/neii-neii.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "campaign": "Fortune's Weave"
+  },
+  "friends/starfall": {
+    "name": "Starfall",
+    "faction": "Friends",
+    "source": "Portraits/Fortune's Weave/Friends/Starfall.webp",
+    "avatar": "friends/starfall.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "campaign": "Fortune's Weave"
+  },
+  "oasis-server/friends/starfall": {
+    "name": "Starfall",
+    "faction": "Friends",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Friends/Starfall.webp",
+    "avatar": "oasis-server/friends/starfall.png",
     "crop": [
       0.0,
       0.0,
       1.0
     ]
   },
-  "friends/starfall": {
-    "name": "Starfall",
+  "oasis-server/friends/sugar-cookie": {
+    "name": "Sugar Cookie",
     "faction": "Friends",
-    "source": "Portraits/Friends/Starfall.webp",
-    "avatar": "friends/starfall.png",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Friends/SugarCookie.webp",
+    "avatar": "oasis-server/friends/sugar-cookie.png",
     "crop": [
       0.0,
       0.0,
@@ -271,8 +434,21 @@
   "friends/sugar-cookie": {
     "name": "SugarCookie",
     "faction": "Friends",
-    "source": "Portraits/Friends/SugarCookie.webp",
+    "source": "Portraits/Fortune's Weave/Friends/SugarCookie.webp",
     "avatar": "friends/sugar-cookie.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "campaign": "Fortune's Weave"
+  },
+  "oasis-server/friends/that-nguy": {
+    "name": "that Nguy",
+    "faction": "Friends",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Friends/thatNguy.webp",
+    "avatar": "oasis-server/friends/that-nguy.png",
     "crop": [
       0.0,
       0.0,
@@ -282,8 +458,21 @@
   "friends/that-nguy": {
     "name": "thatNguy",
     "faction": "Friends",
-    "source": "Portraits/Friends/thatNguy.webp",
+    "source": "Portraits/Fortune's Weave/Friends/thatNguy.webp",
     "avatar": "friends/that-nguy.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "campaign": "Fortune's Weave"
+  },
+  "oasis-server/friends/will-s": {
+    "name": "Will S",
+    "faction": "Friends",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Friends/WillS.webp",
+    "avatar": "oasis-server/friends/will-s.png",
     "crop": [
       0.0,
       0.0,
@@ -293,18 +482,19 @@
   "friends/will-s": {
     "name": "WillS",
     "faction": "Friends",
-    "source": "Portraits/Friends/WillS.webp",
+    "source": "Portraits/Fortune's Weave/Friends/WillS.webp",
     "avatar": "friends/will-s.png",
     "crop": [
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "gods-of-dagda/aurora": {
     "name": "Aurora",
     "faction": "Gods of Dagda",
-    "source": "Portraits/Gods of Dagda/Aurora.webp",
+    "source": "Portraits/Fortune's Weave/Gods of Dagda/Aurora.webp",
     "avatar": "gods-of-dagda/aurora.png",
     "crop": [
       0.2383,
@@ -316,12 +506,13 @@
       0.3525,
       0.0965,
       0.409
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "gods-of-dagda/credna": {
     "name": "Credna",
     "faction": "Gods of Dagda",
-    "source": "Portraits/Gods of Dagda/Credna.webp",
+    "source": "Portraits/Fortune's Weave/Gods of Dagda/Credna.webp",
     "avatar": "gods-of-dagda/credna.png",
     "crop": [
       0.0,
@@ -333,12 +524,13 @@
       0.0049,
       -0.0152,
       0.851
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "gods-of-dagda/dagda": {
     "name": "Dagda the Great",
     "faction": "Gods of Dagda",
-    "source": "Portraits/Gods of Dagda/Medium_portrait_dagda_fe18.png",
+    "source": "Portraits/Fortune's Weave/Gods of Dagda/Medium_portrait_dagda_fe18.png",
     "avatar": "gods-of-dagda/dagda.png",
     "crop": [
       -0.0252,
@@ -350,12 +542,13 @@
       0.0482,
       0.0988,
       0.877
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "gods-of-dagda/fortuna": {
     "name": "Fortuna",
     "faction": "Gods of Dagda",
-    "source": "Portraits/Gods of Dagda/Fortuna.webp",
+    "source": "Portraits/Fortune's Weave/Gods of Dagda/Fortuna.webp",
     "avatar": "gods-of-dagda/fortuna.png",
     "crop": [
       0.1627,
@@ -367,12 +560,13 @@
       0.2592,
       0.281,
       0.37
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "gods-of-dagda/jurah": {
     "name": "Jurah",
     "faction": "Gods of Dagda",
-    "source": "Portraits/Gods of Dagda/Jurah.webp",
+    "source": "Portraits/Fortune's Weave/Gods of Dagda/Jurah.webp",
     "avatar": "gods-of-dagda/jurah.png",
     "crop": [
       0.0,
@@ -384,12 +578,13 @@
       0.0779,
       0.1027,
       0.747
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "gods-of-dagda/kalla": {
     "name": "Kalla",
     "faction": "Gods of Dagda",
-    "source": "Portraits/Gods of Dagda/FEFW_Nintendo_Today_Kalla_profile.webp",
+    "source": "Portraits/Fortune's Weave/Gods of Dagda/FEFW_Nintendo_Today_Kalla_profile.webp",
     "avatar": "gods-of-dagda/kalla.png",
     "crop": [
       0.0,
@@ -400,12 +595,13 @@
       0.2339,
       0.0529,
       0.562
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "gods-of-dagda/mars": {
     "name": "Mars",
     "faction": "Gods of Dagda",
-    "source": "Portraits/Gods of Dagda/Mars.webp",
+    "source": "Portraits/Fortune's Weave/Gods of Dagda/Mars.webp",
     "avatar": "gods-of-dagda/mars.png",
     "crop": [
       0.0764,
@@ -417,12 +613,13 @@
       0.1752,
       0.0078,
       0.625
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "gods-of-dagda/smyrnos": {
     "name": "Smyrnos",
     "faction": "Gods of Dagda",
-    "source": "Portraits/Gods of Dagda/Smyrnos.webp",
+    "source": "Portraits/Fortune's Weave/Gods of Dagda/Smyrnos.webp",
     "avatar": "gods-of-dagda/smyrnos.png",
     "crop": [
       0.0,
@@ -434,12 +631,13 @@
       0.1094,
       0.0386,
       0.784
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "gods-of-dagda/solel": {
     "name": "Solel",
     "faction": "Gods of Dagda",
-    "source": "Portraits/Gods of Dagda/Solel Portrait.webp",
+    "source": "Portraits/Fortune's Weave/Gods of Dagda/Solel Portrait.webp",
     "avatar": "gods-of-dagda/solel.png",
     "crop": [
       0.0679,
@@ -451,12 +649,13 @@
       0.1616,
       0.006,
       0.568
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "gods-of-dagda/sothis": {
     "name": "The Beginning",
     "faction": "Gods of Dagda",
-    "source": "Portraits/Gods of Dagda/mom1tmbfh3sf1.jpeg",
+    "source": "Portraits/Fortune's Weave/Gods of Dagda/mom1tmbfh3sf1.jpeg",
     "avatar": "gods-of-dagda/sothis.png",
     "crop": [
       0.3513,
@@ -467,12 +666,13 @@
       0.435,
       0.0599,
       0.379
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "gods-of-dagda/yu-phas": {
     "name": "Yu Phas",
     "faction": "Gods of Dagda",
-    "source": "Portraits/Gods of Dagda/Yu Phas.webp",
+    "source": "Portraits/Fortune's Weave/Gods of Dagda/Yu Phas.webp",
     "avatar": "gods-of-dagda/yu-phas.png",
     "crop": [
       0.3443,
@@ -483,12 +683,13 @@
       0.3986,
       0.0539,
       0.23
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "gods-of-dagda/yu-phas-2": {
     "name": "Yu Phas",
     "faction": "Gods of Dagda",
-    "source": "Portraits/Gods of Dagda/Artwork_Yu_Phas.webp",
+    "source": "Portraits/Fortune's Weave/Gods of Dagda/Artwork_Yu_Phas.webp",
     "avatar": "gods-of-dagda/yu-phas-2.png",
     "crop": [
       0.1651,
@@ -500,12 +701,13 @@
       0.2496,
       0.0622,
       0.501
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "house-lamine/dietrich": {
     "name": "Dietrich",
     "faction": "House Lamine",
-    "source": "Portraits/House Lamine/FEFW_Nintendo_Today_Dietrich_profile.webp",
+    "source": "Portraits/Fortune's Weave/House Lamine/FEFW_Nintendo_Today_Dietrich_profile.webp",
     "avatar": "house-lamine/dietrich.png",
     "crop": [
       0.2,
@@ -517,12 +719,13 @@
       0.3527,
       0.0658,
       0.24
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "house-lamine/esmeralda": {
     "name": "Esmeralda",
     "faction": "House Lamine",
-    "source": "Portraits/House Lamine/FEFW_Nintendo_Today_Esmeralda_profile.webp.png",
+    "source": "Portraits/Fortune's Weave/House Lamine/FEFW_Nintendo_Today_Esmeralda_profile.webp.png",
     "avatar": "house-lamine/esmeralda.png",
     "crop": [
       0.0,
@@ -534,12 +737,13 @@
       0.2205,
       0.0343,
       0.58
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "house-lamine/fabio": {
     "name": "Fabio",
     "faction": "House Lamine",
-    "source": "Portraits/House Lamine/FEFW_Nintendo_Today_Fabio_profile.webp",
+    "source": "Portraits/Fortune's Weave/House Lamine/FEFW_Nintendo_Today_Fabio_profile.webp",
     "avatar": "house-lamine/fabio.png",
     "crop": [
       0.0,
@@ -551,12 +755,13 @@
       0.2139,
       0.0584,
       0.555
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "house-lamine/mikaela": {
     "name": "Mikaela",
     "faction": "House Lamine",
-    "source": "Portraits/House Lamine/FEFW_Nintendo_Today_Mikaela_profile.webp.png",
+    "source": "Portraits/Fortune's Weave/House Lamine/FEFW_Nintendo_Today_Mikaela_profile.webp.png",
     "avatar": "house-lamine/mikaela.png",
     "crop": [
       0.0,
@@ -568,12 +773,13 @@
       0.17,
       0.0345,
       0.635
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "kingdom-of-arago/aswan": {
     "name": "Aswan",
     "faction": "Kingdom of Arago",
-    "source": "Portraits/Kingdom of Arago/AswanFE18Portrait.webp",
+    "source": "Portraits/Fortune's Weave/Kingdom of Arago/AswanFE18Portrait.webp",
     "avatar": "kingdom-of-arago/aswan.png",
     "crop": [
       -0.06,
@@ -584,12 +790,13 @@
       0.0041,
       -0.0211,
       0.822
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "kingdom-of-arago/creek": {
     "name": "Creek",
     "faction": "Kingdom of Arago",
-    "source": "Portraits/Kingdom of Arago/FEFW_Nintendo_Today_Creek_profile.webp",
+    "source": "Portraits/Fortune's Weave/Kingdom of Arago/FEFW_Nintendo_Today_Creek_profile.webp",
     "avatar": "kingdom-of-arago/creek.png",
     "crop": [
       0.0,
@@ -600,12 +807,13 @@
       0.1448,
       0.0401,
       0.629
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "kingdom-of-arago/nathan": {
     "name": "Nathan",
     "faction": "Kingdom of Arago",
-    "source": "Portraits/Kingdom of Arago/FEFW_Nintendo_Today_Nathan_profile.webp",
+    "source": "Portraits/Fortune's Weave/Kingdom of Arago/FEFW_Nintendo_Today_Nathan_profile.webp",
     "avatar": "kingdom-of-arago/nathan.png",
     "crop": [
       0.0,
@@ -616,12 +824,145 @@
       0.2786,
       0.0533,
       0.5
+    ],
+    "campaign": "Fortune's Weave"
+  },
+  "oasis-server/kiris/eijiro-kirishima": {
+    "name": "Eijiro Kirishima",
+    "faction": "Kiris",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Kiris/Eijiro Kirishima.webp",
+    "avatar": "oasis-server/kiris/eijiro-kirishima.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "oasis-server/kiris/gesubgzkllbc1": {
+    "name": "gesubgzkllbc1",
+    "faction": "Kiris",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Kiris/gesubgzkllbc1.jpg",
+    "avatar": "oasis-server/kiris/gesubgzkllbc1.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "oasis-server/kiris/images-steamusercontent": {
+    "name": "images.steamusercontent",
+    "faction": "Kiris",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Kiris/images.steamusercontent.jpg",
+    "avatar": "oasis-server/kiris/images-steamusercontent.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "oasis-server/kiris/izuku-sketch-nei": {
+    "name": "Izuku Sketch Nei",
+    "faction": "Kiris",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Kiris/Izuku_Sketch_Nei.png",
+    "avatar": "oasis-server/kiris/izuku-sketch-nei.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "oasis-server/kiris/kendo-final": {
+    "name": "Kendo Final",
+    "faction": "Kiris",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Kiris/Kendo Final.png",
+    "avatar": "oasis-server/kiris/kendo-final.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "oasis-server/kiris/kendo-sketch": {
+    "name": "Kendo Sketch",
+    "faction": "Kiris",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Kiris/Kendo_Sketch.png",
+    "avatar": "oasis-server/kiris/kendo-sketch.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "oasis-server/kiris/kodai-sketch": {
+    "name": "Kodai Sketch",
+    "faction": "Kiris",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Kiris/Kodai_Sketch.png",
+    "avatar": "oasis-server/kiris/kodai-sketch.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "oasis-server/kiris/lapis-by-rebecca-sugar": {
+    "name": "Lapis by Rebecca Sugar",
+    "faction": "Kiris",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Kiris/Lapis_by_Rebecca_Sugar.webp",
+    "avatar": "oasis-server/kiris/lapis-by-rebecca-sugar.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "oasis-server/kiris/momo-sketch-nei": {
+    "name": "Momo Sketch Nei",
+    "faction": "Kiris",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Kiris/Momo_Sketch_Nei.png",
+    "avatar": "oasis-server/kiris/momo-sketch-nei.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "oasis-server/kiris/pony-sketch": {
+    "name": "Pony Sketch",
+    "faction": "Kiris",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Kiris/Pony_Sketch.png",
+    "avatar": "oasis-server/kiris/pony-sketch.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "oasis-server/kiris/setsuna": {
+    "name": "Setsuna",
+    "faction": "Kiris",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Kiris/Setsuna.webp",
+    "avatar": "oasis-server/kiris/setsuna.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
     ]
   },
   "linarias-dewdrops/diego": {
     "name": "Diego",
     "faction": "Linaria's Dewdrops",
-    "source": "Portraits/Linaria's Dewdrops/FEFW_Nintendo_Today_Diego_profile.webp",
+    "source": "Portraits/Fortune's Weave/Linaria's Dewdrops/FEFW_Nintendo_Today_Diego_profile.webp",
     "avatar": "linarias-dewdrops/diego.png",
     "crop": [
       0.0,
@@ -633,12 +974,13 @@
       0.2614,
       0.0497,
       0.5
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "linarias-dewdrops/loretta": {
     "name": "Loretta",
     "faction": "Linaria's Dewdrops",
-    "source": "Portraits/Linaria's Dewdrops/FEFW_Nintendo_Today_Loretta_profile.webp",
+    "source": "Portraits/Fortune's Weave/Linaria's Dewdrops/FEFW_Nintendo_Today_Loretta_profile.webp",
     "avatar": "linarias-dewdrops/loretta.png",
     "crop": [
       0.0,
@@ -650,12 +992,13 @@
       0.2342,
       0.0403,
       0.5
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "linarias-dewdrops/ninae": {
     "name": "Ninae",
     "faction": "Linaria's Dewdrops",
-    "source": "Portraits/Linaria's Dewdrops/FEFW_Nintendo_Today_Ninae_profile.webp",
+    "source": "Portraits/Fortune's Weave/Linaria's Dewdrops/FEFW_Nintendo_Today_Ninae_profile.webp",
     "avatar": "linarias-dewdrops/ninae.png",
     "crop": [
       0.0,
@@ -667,12 +1010,13 @@
       0.2535,
       0.0423,
       0.48
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "linarias-dewdrops/orchel": {
     "name": "Orchel",
     "faction": "Linaria's Dewdrops",
-    "source": "Portraits/Linaria's Dewdrops/FEFW_Nintendo_Today_Orchel_profile.webp",
+    "source": "Portraits/Fortune's Weave/Linaria's Dewdrops/FEFW_Nintendo_Today_Orchel_profile.webp",
     "avatar": "linarias-dewdrops/orchel.png",
     "crop": [
       0.13,
@@ -684,12 +1028,13 @@
       0.3659,
       0.0678,
       0.22
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "linarias-dewdrops/seteth": {
     "name": "Seteth",
     "faction": "Linaria's Dewdrops",
-    "source": "Portraits/Linaria's Dewdrops/FEFW_Nintendo_Today_Seteth_profile.webp",
+    "source": "Portraits/Fortune's Weave/Linaria's Dewdrops/FEFW_Nintendo_Today_Seteth_profile.webp",
     "avatar": "linarias-dewdrops/seteth.png",
     "crop": [
       0.36,
@@ -701,12 +1046,13 @@
       0.4927,
       0.0413,
       0.22
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "megairas-beacon/bonaventure": {
     "name": "Bonaventure",
     "faction": "Megaira's Beacon",
-    "source": "Portraits/Megaira's Beacon/FEFW_Nintendo_Today_Bonaventure_profile.webp.png",
+    "source": "Portraits/Fortune's Weave/Megaira's Beacon/FEFW_Nintendo_Today_Bonaventure_profile.webp.png",
     "avatar": "megairas-beacon/bonaventure.png",
     "crop": [
       0.0,
@@ -718,12 +1064,13 @@
       0.2685,
       0.0418,
       0.5
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "megairas-beacon/lilian": {
     "name": "Lilian",
     "faction": "Megaira's Beacon",
-    "source": "Portraits/Megaira's Beacon/FEFW_Nintendo_Today_Lilian_profile.webp.png",
+    "source": "Portraits/Fortune's Weave/Megaira's Beacon/FEFW_Nintendo_Today_Lilian_profile.webp.png",
     "avatar": "megairas-beacon/lilian.png",
     "crop": [
       0.0,
@@ -735,12 +1082,13 @@
       0.1744,
       0.0401,
       0.59
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "megairas-beacon/lysander": {
     "name": "Lysander",
     "faction": "Megaira's Beacon",
-    "source": "Portraits/Megaira's Beacon/FEFW_Nintendo_Today_Lysander_profile.webp",
+    "source": "Portraits/Fortune's Weave/Megaira's Beacon/FEFW_Nintendo_Today_Lysander_profile.webp",
     "avatar": "megairas-beacon/lysander.png",
     "crop": [
       0.0,
@@ -752,12 +1100,13 @@
       0.1869,
       -0.0102,
       0.627
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "megairas-beacon/theodora": {
     "name": "Theodora",
     "faction": "Megaira's Beacon",
-    "source": "Portraits/Megaira's Beacon/FEFW_Nintendo_Today_Theodora_profile.webp.png",
+    "source": "Portraits/Fortune's Weave/Megaira's Beacon/FEFW_Nintendo_Today_Theodora_profile.webp.png",
     "avatar": "megairas-beacon/theodora.png",
     "crop": [
       0.26,
@@ -769,12 +1118,13 @@
       0.3542,
       0.0881,
       0.298
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "megairas-beacon/tobias": {
     "name": "Tobias",
     "faction": "Megaira's Beacon",
-    "source": "Portraits/Megaira's Beacon/FEFW_Nintendo_Today_Tobias_profile.webp",
+    "source": "Portraits/Fortune's Weave/Megaira's Beacon/FEFW_Nintendo_Today_Tobias_profile.webp",
     "avatar": "megairas-beacon/tobias.png",
     "crop": [
       0.0,
@@ -786,12 +1136,13 @@
       0.2294,
       0.027,
       0.5
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "ribeira-winds/cai": {
     "name": "Cai",
     "faction": "Ribeira Winds",
-    "source": "Portraits/Ribeira Winds/FEFW_Nintendo_Today_Cai_profile.webp.png",
+    "source": "Portraits/Fortune's Weave/Ribeira Winds/FEFW_Nintendo_Today_Cai_profile.webp.png",
     "avatar": "ribeira-winds/cai.png",
     "crop": [
       0.1618,
@@ -803,12 +1154,13 @@
       0.2163,
       0.0565,
       0.28
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "ribeira-winds/peter": {
     "name": "Peter",
     "faction": "Ribeira Winds",
-    "source": "Portraits/Ribeira Winds/FEFW_Nintendo_Today_Peter_profile.webp.png",
+    "source": "Portraits/Fortune's Weave/Ribeira Winds/FEFW_Nintendo_Today_Peter_profile.webp.png",
     "avatar": "ribeira-winds/peter.png",
     "crop": [
       0.0,
@@ -820,12 +1172,13 @@
       0.2796,
       0.0541,
       0.49
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "ribeira-winds/tialla": {
     "name": "Tialla",
     "faction": "Ribeira Winds",
-    "source": "Portraits/Ribeira Winds/Tialla.png",
+    "source": "Portraits/Fortune's Weave/Ribeira Winds/Tialla.png",
     "avatar": "ribeira-winds/tialla.png",
     "crop": [
       0.0,
@@ -837,12 +1190,13 @@
       0.2189,
       0.0651,
       0.525
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "ribeira-winds/ultand": {
     "name": "Ultand",
     "faction": "Ribeira Winds",
-    "source": "Portraits/Ribeira Winds/FEFW_Nintendo_Today_Ultand_profile.webp.png",
+    "source": "Portraits/Fortune's Weave/Ribeira Winds/FEFW_Nintendo_Today_Ultand_profile.webp.png",
     "avatar": "ribeira-winds/ultand.png",
     "crop": [
       0.0,
@@ -854,12 +1208,13 @@
       0.2435,
       0.0218,
       0.521
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "rose-tempest/buccar": {
     "name": "Buccar",
     "faction": "Rose Tempest",
-    "source": "Portraits/Rose Tempest/FEFW_Nintendo_Today_Buccar_profile.webp",
+    "source": "Portraits/Fortune's Weave/Rose Tempest/FEFW_Nintendo_Today_Buccar_profile.webp",
     "avatar": "rose-tempest/buccar.png",
     "crop": [
       0.0,
@@ -871,12 +1226,13 @@
       0.2358,
       0.052,
       0.5
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "rose-tempest/leda": {
     "name": "Leda",
     "faction": "Rose Tempest",
-    "source": "Portraits/Rose Tempest/FEFW_Nintendo_Today_Leda_profile.webp.png",
+    "source": "Portraits/Fortune's Weave/Rose Tempest/FEFW_Nintendo_Today_Leda_profile.webp.png",
     "avatar": "rose-tempest/leda.png",
     "crop": [
       0.22,
@@ -888,12 +1244,13 @@
       0.3686,
       0.0303,
       0.299
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "rose-tempest/mu": {
     "name": "Mu",
     "faction": "Rose Tempest",
-    "source": "Portraits/Rose Tempest/FEFW_Nintendo_Today_Mu_profile.webp",
+    "source": "Portraits/Fortune's Weave/Rose Tempest/FEFW_Nintendo_Today_Mu_profile.webp",
     "avatar": "rose-tempest/mu.png",
     "crop": [
       0.0,
@@ -905,12 +1262,13 @@
       0.2573,
       0.0386,
       0.48
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "rose-tempest/olympia": {
     "name": "Olympia",
     "faction": "Rose Tempest",
-    "source": "Portraits/Rose Tempest/FEFW_Nintendo_Today_Olympia_profile.webp",
+    "source": "Portraits/Fortune's Weave/Rose Tempest/FEFW_Nintendo_Today_Olympia_profile.webp",
     "avatar": "rose-tempest/olympia.png",
     "crop": [
       0.0,
@@ -922,12 +1280,13 @@
       0.1715,
       0.0003,
       0.58
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "rose-tempest/sirocco": {
     "name": "Sirocco",
     "faction": "Rose Tempest",
-    "source": "Portraits/Rose Tempest/FEFW_Nintendo_Today_Sirocco_profile.webp",
+    "source": "Portraits/Fortune's Weave/Rose Tempest/FEFW_Nintendo_Today_Sirocco_profile.webp",
     "avatar": "rose-tempest/sirocco.png",
     "crop": [
       0.0,
@@ -939,12 +1298,13 @@
       0.2457,
       0.0676,
       0.48
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "tale-of-the-moon/fianna": {
     "name": "Fianna",
     "faction": "Tale of the Moon",
-    "source": "Portraits/Tale of the Moon/FEFW_Nintendo_Today_Fianna_profile.webp",
+    "source": "Portraits/Fortune's Weave/Tale of the Moon/FEFW_Nintendo_Today_Fianna_profile.webp",
     "avatar": "tale-of-the-moon/fianna.png",
     "crop": [
       0.0,
@@ -956,12 +1316,13 @@
       0.2668,
       0.0653,
       0.48
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "tale-of-the-moon/ludia": {
     "name": "Ludia",
     "faction": "Tale of the Moon",
-    "source": "Portraits/Tale of the Moon/FEFW_Nintendo_Today_Ludia_profile.webp.png",
+    "source": "Portraits/Fortune's Weave/Tale of the Moon/FEFW_Nintendo_Today_Ludia_profile.webp.png",
     "avatar": "tale-of-the-moon/ludia.png",
     "crop": [
       0.0,
@@ -973,12 +1334,13 @@
       0.2114,
       0.0104,
       0.58
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "tale-of-the-moon/simon": {
     "name": "Simon",
     "faction": "Tale of the Moon",
-    "source": "Portraits/Tale of the Moon/FEFW_Nintendo_Today_Simon_profile.webp.png",
+    "source": "Portraits/Fortune's Weave/Tale of the Moon/FEFW_Nintendo_Today_Simon_profile.webp.png",
     "avatar": "tale-of-the-moon/simon.png",
     "crop": [
       0.0,
@@ -990,12 +1352,13 @@
       0.1659,
       0.0619,
       0.5
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "tale-of-the-moon/talimun": {
     "name": "Talimun",
     "faction": "Tale of the Moon",
-    "source": "Portraits/Tale of the Moon/FEFW_Nintendo_Today_Talimun_profile.webp.png",
+    "source": "Portraits/Fortune's Weave/Tale of the Moon/FEFW_Nintendo_Today_Talimun_profile.webp.png",
     "avatar": "tale-of-the-moon/talimun.png",
     "crop": [
       0.285,
@@ -1007,12 +1370,13 @@
       0.4165,
       0.0288,
       0.25
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "tale-of-the-moon/ursula": {
     "name": "Ursula",
     "faction": "Tale of the Moon",
-    "source": "Portraits/Tale of the Moon/FEFW_Nintendo_Today_Ursula_profile.webp.png",
+    "source": "Portraits/Fortune's Weave/Tale of the Moon/FEFW_Nintendo_Today_Ursula_profile.webp.png",
     "avatar": "tale-of-the-moon/ursula.png",
     "crop": [
       0.0,
@@ -1024,12 +1388,13 @@
       0.2199,
       0.0274,
       0.568
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "temple-army/anna": {
     "name": "Anna",
     "faction": "Temple Army",
-    "source": "Portraits/Temple Army/FEFW_Nintendo_Today_Anna_profile.webp.png",
+    "source": "Portraits/Fortune's Weave/Temple Army/FEFW_Nintendo_Today_Anna_profile.webp.png",
     "avatar": "temple-army/anna.png",
     "crop": [
       0.0,
@@ -1041,12 +1406,13 @@
       0.2297,
       0.0344,
       0.584
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "temple-army/centurio": {
     "name": "Centurio",
     "faction": "Temple Army",
-    "source": "Portraits/Temple Army/FEFW_Nintendo_Today_Centurio_profile.webp.png",
+    "source": "Portraits/Fortune's Weave/Temple Army/FEFW_Nintendo_Today_Centurio_profile.webp.png",
     "avatar": "temple-army/centurio.png",
     "crop": [
       0.0,
@@ -1058,12 +1424,13 @@
       0.261,
       0.0664,
       0.5
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "temple-army/sofia": {
     "name": "Sofia",
     "faction": "Temple Army",
-    "source": "Portraits/Temple Army/Sofia.png",
+    "source": "Portraits/Fortune's Weave/Temple Army/Sofia.png",
     "avatar": "temple-army/sofia.png",
     "crop": [
       0.0,
@@ -1075,12 +1442,13 @@
       0.1478,
       0.0488,
       0.668
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "unaffiliated/alexandra": {
     "name": "Alexandra",
     "faction": "Unaffiliated",
-    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Alexandra_profile.webp",
+    "source": "Portraits/Fortune's Weave/Unaffiliated/FEFW_Nintendo_Today_Alexandra_profile.webp",
     "avatar": "unaffiliated/alexandra.png",
     "crop": [
       0.0,
@@ -1091,12 +1459,13 @@
       0.1915,
       0.0457,
       0.608
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "unaffiliated/bahr-vahn": {
     "name": "Bahr Vahn",
     "faction": "Unaffiliated",
-    "source": "Portraits/Unaffiliated/BahrVahnFE18Portrait.webp",
+    "source": "Portraits/Fortune's Weave/Unaffiliated/BahrVahnFE18Portrait.webp",
     "avatar": "unaffiliated/bahr-vahn.png",
     "crop": [
       0.0,
@@ -1107,12 +1476,13 @@
       0.1097,
       0.0241,
       0.85
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "unaffiliated/benditz": {
     "name": "Benditz",
     "faction": "Unaffiliated",
-    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Benditz_profile.webp",
+    "source": "Portraits/Fortune's Weave/Unaffiliated/FEFW_Nintendo_Today_Benditz_profile.webp",
     "avatar": "unaffiliated/benditz.png",
     "crop": [
       0.0,
@@ -1123,12 +1493,13 @@
       0.2432,
       0.0541,
       0.5
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "unaffiliated/catania": {
     "name": "Catania",
     "faction": "Unaffiliated",
-    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Catania_profile.webp",
+    "source": "Portraits/Fortune's Weave/Unaffiliated/FEFW_Nintendo_Today_Catania_profile.webp",
     "avatar": "unaffiliated/catania.png",
     "crop": [
       0.0,
@@ -1139,12 +1510,13 @@
       0.1933,
       0.0197,
       0.58
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "unaffiliated/guzran": {
     "name": "Guzran",
     "faction": "Unaffiliated",
-    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Guzran_profile.webp",
+    "source": "Portraits/Fortune's Weave/Unaffiliated/FEFW_Nintendo_Today_Guzran_profile.webp",
     "avatar": "unaffiliated/guzran.png",
     "crop": [
       0.0,
@@ -1155,12 +1527,13 @@
       0.2649,
       0.0477,
       0.5
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "unaffiliated/inyoni": {
     "name": "Inyoni",
     "faction": "Unaffiliated",
-    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Inyoni_profile.webp",
+    "source": "Portraits/Fortune's Weave/Unaffiliated/FEFW_Nintendo_Today_Inyoni_profile.webp",
     "avatar": "unaffiliated/inyoni.png",
     "crop": [
       0.0,
@@ -1171,12 +1544,13 @@
       0.256,
       0.056,
       0.48
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "unaffiliated/io": {
     "name": "Io",
     "faction": "Unaffiliated",
-    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Io_profile.webp",
+    "source": "Portraits/Fortune's Weave/Unaffiliated/FEFW_Nintendo_Today_Io_profile.webp",
     "avatar": "unaffiliated/io.png",
     "crop": [
       0.0,
@@ -1187,12 +1561,13 @@
       0.2491,
       0.0617,
       0.48
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "unaffiliated/jasmine": {
     "name": "Jasmine",
     "faction": "Unaffiliated",
-    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Jasmine_profile.webp",
+    "source": "Portraits/Fortune's Weave/Unaffiliated/FEFW_Nintendo_Today_Jasmine_profile.webp",
     "avatar": "unaffiliated/jasmine.png",
     "crop": [
       0.0,
@@ -1203,12 +1578,13 @@
       0.2527,
       0.0636,
       0.5
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "unaffiliated/kiroc": {
     "name": "Kiroc",
     "faction": "Unaffiliated",
-    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Kiroc_profile.webp",
+    "source": "Portraits/Fortune's Weave/Unaffiliated/FEFW_Nintendo_Today_Kiroc_profile.webp",
     "avatar": "unaffiliated/kiroc.png",
     "crop": [
       0.0,
@@ -1219,12 +1595,13 @@
       0.1258,
       0.0963,
       0.5
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "unaffiliated/majide": {
     "name": "Majide",
     "faction": "Unaffiliated",
-    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Majide_profile.webp",
+    "source": "Portraits/Fortune's Weave/Unaffiliated/FEFW_Nintendo_Today_Majide_profile.webp",
     "avatar": "unaffiliated/majide.png",
     "crop": [
       0.0,
@@ -1235,12 +1612,13 @@
       0.2291,
       0.0463,
       0.5
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "unaffiliated/noctula": {
     "name": "Noctula",
     "faction": "Unaffiliated",
-    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Noctula_profile.webp",
+    "source": "Portraits/Fortune's Weave/Unaffiliated/FEFW_Nintendo_Today_Noctula_profile.webp",
     "avatar": "unaffiliated/noctula.png",
     "crop": [
       0.0,
@@ -1251,12 +1629,13 @@
       0.2464,
       0.0437,
       0.48
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "unaffiliated/nuzzuo": {
     "name": "Nuzzuo",
     "faction": "Unaffiliated",
-    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Nuzzuo_profile.webp.png",
+    "source": "Portraits/Fortune's Weave/Unaffiliated/FEFW_Nintendo_Today_Nuzzuo_profile.webp.png",
     "avatar": "unaffiliated/nuzzuo.png",
     "crop": [
       0.0,
@@ -1267,12 +1646,13 @@
       0.2384,
       0.0395,
       0.54
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "unaffiliated/nydine": {
     "name": "Nydine",
     "faction": "Unaffiliated",
-    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Nydine_profile.webp",
+    "source": "Portraits/Fortune's Weave/Unaffiliated/FEFW_Nintendo_Today_Nydine_profile.webp",
     "avatar": "unaffiliated/nydine.png",
     "crop": [
       0.0,
@@ -1283,12 +1663,13 @@
       0.2325,
       0.0597,
       0.565
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "unaffiliated/peppe": {
     "name": "Peppe",
     "faction": "Unaffiliated",
-    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Peppe_profile.webp",
+    "source": "Portraits/Fortune's Weave/Unaffiliated/FEFW_Nintendo_Today_Peppe_profile.webp",
     "avatar": "unaffiliated/peppe.png",
     "crop": [
       0.0,
@@ -1299,12 +1680,13 @@
       0.1957,
       0.0522,
       0.574
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "unaffiliated/yang-jie": {
     "name": "Yang Jie",
     "faction": "Unaffiliated",
-    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Yang_Jie_profile.webp.png",
+    "source": "Portraits/Fortune's Weave/Unaffiliated/FEFW_Nintendo_Today_Yang_Jie_profile.webp.png",
     "avatar": "unaffiliated/yang-jie.png",
     "crop": [
       0.0,
@@ -1315,12 +1697,13 @@
       0.2222,
       0.0818,
       0.5
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   },
   "unaffiliated/zarcone": {
     "name": "Zarcone",
     "faction": "Unaffiliated",
-    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Zarcone_profile.webp",
+    "source": "Portraits/Fortune's Weave/Unaffiliated/FEFW_Nintendo_Today_Zarcone_profile.webp",
     "avatar": "unaffiliated/zarcone.png",
     "crop": [
       0.0,
@@ -1331,6 +1714,7 @@
       0.2172,
       0.0813,
       0.5
-    ]
+    ],
+    "campaign": "Fortune's Weave"
   }
 }

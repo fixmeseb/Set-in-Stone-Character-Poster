@@ -1,0 +1,28 @@
+{
+    "campaign_order": [],
+    "campaigns": {
+        "Fortune's Weave": {
+            "order": [
+                "Gods of Dagda",
+                "Ribeira Winds",
+                "House Lamine",
+                "Megaira's Beacon",
+                "Rose Tempest",
+                "Linaria's Dewdrops",
+                "Fiery Mane",
+                "Tale of the Moon",
+                "Bridal Party of the Pale Raven",
+                "Kingdom of Arago",
+                "Temple Army",
+                "Unaffiliated"
+            ],
+            "names": {
+                "Friends": "Players"
+            }
+        },
+        "OASIS Server": {
+            "order": [],
+            "names": {}
+        }
+    }
+}

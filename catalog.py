@@ -1,4 +1,4 @@
-"""Character catalog: scans Portraits/, builds Discord-ready avatar PNGs, and
+"""Character catalog: scans Portraits/<Campaign>/<Faction>/, builds Discord-ready avatar PNGs, and
 keeps characters.json (default names, crop overrides) in sync.
 
 Run directly to sync from the command line:
@@ -8,6 +8,7 @@ Run directly to sync from the command line:
 
 import json
 import re
+import shutil
 import sys
 from pathlib import Path
 
@@ -17,6 +18,9 @@ ROOT = Path(__file__).resolve().parent
 PORTRAITS_DIR = ROOT / "Portraits"
 AVATARS_DIR = ROOT / "avatars"
 CHARACTERS_FILE = ROOT / "characters.json"
+
+# Portraits used to be Portraits/<Faction>/; those folders now live in this campaign.
+DEFAULT_CAMPAIGN = "Fortune's Weave"
 
 AVATAR_SIZE = 512
 IMAGE_EXTS = {".webp", ".png", ".jpg", ".jpeg", ".gif"}
@@ -122,6 +126,51 @@ def zoom_avatar(character: dict) -> str:
     return character["avatar"].removesuffix(".png") + "-zoom.png"
 
 
+def campaigns() -> list:
+    """Campaign folders in Portraits/, including empty ones just created."""
+    if not PORTRAITS_DIR.exists():
+        return []
+    return sorted(d.name for d in PORTRAITS_DIR.iterdir() if d.is_dir())
+
+
+def migrate_layout(characters: dict) -> bool:
+    """Move old Portraits/<Faction>/ folders into Portraits/<DEFAULT_CAMPAIGN>/ and point
+    their characters at the new paths, so names, crops and avatars carry over. Safe to re-run."""
+    changed = False
+    target = PORTRAITS_DIR / DEFAULT_CAMPAIGN
+    for c in characters.values():
+        parts = c["source"].split("/")
+        if len(parts) == 3:  # Portraits/<Faction>/<file>
+            old_dir = PORTRAITS_DIR / parts[1]
+            new_dir = target / parts[1]
+            if old_dir.is_dir():
+                new_dir.mkdir(parents=True, exist_ok=True)
+                for f in list(old_dir.iterdir()):
+                    if not (new_dir / f.name).exists():
+                        shutil.move(str(f), str(new_dir / f.name))
+                if not any(old_dir.iterdir()):
+                    old_dir.rmdir()
+            c["source"] = f"Portraits/{DEFAULT_CAMPAIGN}/{parts[1]}/{parts[2]}"
+            changed = True
+        if "campaign" not in c:
+            c["campaign"] = c["source"].split("/")[1]
+            changed = True
+    return changed
+
+
+def rename_campaign(characters: dict, old: str, new: str) -> None:
+    """Rename a campaign folder and repoint its characters (avatar files and links don't change)."""
+    src, dst = PORTRAITS_DIR / old, PORTRAITS_DIR / new
+    if dst.exists():
+        raise FileExistsError(f'There is already a "{new}" folder in Portraits.')
+    src.rename(dst)
+    for c in characters.values():
+        if c.get("campaign") == old:
+            c["campaign"] = new
+            c["source"] = f"Portraits/{new}/" + c["source"].split("/", 2)[2]
+    save_characters(characters)
+
+
 def sync(force: bool = False, progress=None) -> dict:
     """Bring characters.json and avatars/ in line with Portraits/.
 
@@ -129,18 +178,21 @@ def sync(force: bool = False, progress=None) -> dict:
     called while avatars are rendered. Returns the updated catalog.
     """
     characters = load_characters()
+    migrate_layout(characters)
     by_source = {c["source"]: cid for cid, c in characters.items()}
     seen = set()
 
     sources = sorted(
-        p for p in PORTRAITS_DIR.glob("*/*") if p.is_file() and p.suffix.lower() in IMAGE_EXTS
+        p for p in PORTRAITS_DIR.glob("*/*/*") if p.is_file() and p.suffix.lower() in IMAGE_EXTS
     )
     for path in sources:
         source = path.relative_to(ROOT).as_posix()
         cid = by_source.get(source)
         if cid is None:
-            faction = path.parent.name
+            faction, campaign = path.parent.name, path.parent.parent.name
             base = f"{slugify(faction)}/{slugify(guess_name(path.name))}"
+            if campaign != DEFAULT_CAMPAIGN:  # keep campaigns' avatar paths apart
+                base = f"{slugify(campaign)}/{base}"
             cid, n = base, 2
             while cid in characters:
                 cid, n = f"{base}-{n}", n + 1
@@ -149,6 +201,7 @@ def sync(force: bool = False, progress=None) -> dict:
             characters[cid] = {
                 "name": guess_name(path.name),
                 "faction": faction,
+                "campaign": campaign,
                 "source": source,
                 "avatar": f"{cid}.png",
                 "crop": crop,

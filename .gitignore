@@ -13,3 +13,6 @@ __pycache__/
 build/
 dist/
 *.spec
+
+# Server badge images picked in the app (local to this machine, like the channel list).
+server_icons/

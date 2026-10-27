@@ -2,31 +2,35 @@
 
 import json
 import math
+import os
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
 
 from PyQt6.QtCore import (
-    QByteArray, QMimeData, QPoint, QPointF, QRect, QRectF, QSettings, QSize, Qt, QThread, pyqtSignal,
+    QByteArray, QMimeData, QPoint, QPointF, QRect, QRectF, QSettings, QSize, Qt, QThread, QTimer, pyqtSignal,
 )
 from PyQt6.QtGui import (
     QAction, QColor, QDrag, QFont, QFontDatabase, QIcon, QKeySequence, QLinearGradient, QPainter, QPainterPath, QPalette,
-    QPen, QPixmap, QPolygonF, QShortcut,
+    QActionGroup, QImage, QPen, QPixmap, QPolygonF, QShortcut,
 )
 from PyQt6.QtWidgets import (
-    QApplication, QButtonGroup, QCheckBox, QComboBox, QDialog, QDialogButtonBox, QFileDialog, QFormLayout, QFrame,
-    QGraphicsOpacityEffect, QHBoxLayout, QLabel, QLayout, QLineEdit, QMainWindow, QMenu, QMessageBox,
+    QAbstractButton, QApplication, QButtonGroup, QCheckBox, QComboBox, QDialog, QDialogButtonBox, QFileDialog, QFormLayout, QFrame,
+    QGraphicsOpacityEffect, QHBoxLayout, QInputDialog, QLabel, QLayout, QLineEdit, QMainWindow, QMenu, QMessageBox,
     QPlainTextEdit, QProgressDialog, QPushButton, QScrollArea, QSizePolicy, QSlider, QSplitter, QToolButton,
-    QVBoxLayout, QWidget,
+    QStackedWidget, QVBoxLayout, QWidget,
 )
 
 import catalog
 import discord_client
+import servers
 
 ROOT = Path(__file__).resolve().parent
 CHANNELS_FILE = ROOT / "channel_list.json"
 SETTINGS_FILE = ROOT / "settings.json"
 HISTORY_FILE = ROOT / "history.json"
+SERVER_ICONS_DIR = ROOT / "server_icons"
 ICON_FILE = ROOT / "app_icon.ico"
 BANNER_FILE = ROOT / "Promised_One's_Army_banner.webp"
 FONTS_DIR = ROOT / "fonts"
@@ -67,6 +71,7 @@ FACTION_COLORS = {
     "Bridal Party of the Pale Raven": "#b2b0ac",
 }
 
+VIEWS = {"classic": "Classic", "tarot": "Tarot Spread"}
 FAVORITES = "__favorites__"
 ALL = "__all__"
 # Factions in this order first; any others (e.g. new folders) follow alphabetically.
@@ -75,6 +80,42 @@ FACTION_ORDER = [
     "Fiery Mane", "Tale of the Moon", "Bridal Party of the Pale Raven", "Kingdom of Arago", "Temple Army",
     "Unaffiliated",
 ]
+
+
+FACTIONS_FILE = Path(__file__).resolve().parent / "factions.json"
+FACTION_NAMES = {}  # folder name -> the name shown in the app, when renamed in the app
+FACTION_MIME = "application/x-set-in-stone-faction"
+
+
+DEFAULT_FACTION_ORDER = list(FACTION_ORDER)
+FACTIONS_DATA = {"campaign_order": [], "campaigns": {}}
+CURRENT_CAMPAIGN = [""]  # the campaign whose order and names FACTION_ORDER / FACTION_NAMES hold
+
+
+def load_factions(campaign):
+    """Apply a campaign's faction order and renames saved from the app (factions.json), if any."""
+    data = load_json(FACTIONS_FILE, {})
+    if "campaigns" not in data:  # older file: one order for what is now the default campaign
+        legacy = {k: data[k] for k in ("order", "names") if k in data}
+        data = {"campaign_order": [], "campaigns": {catalog.DEFAULT_CAMPAIGN: legacy} if legacy else {}}
+    FACTIONS_DATA.clear()
+    FACTIONS_DATA.update(data)
+    CURRENT_CAMPAIGN[0] = campaign
+    entry = data["campaigns"].get(campaign, {})
+    default = DEFAULT_FACTION_ORDER if campaign == catalog.DEFAULT_CAMPAIGN else []
+    FACTION_ORDER[:] = entry.get("order") or default
+    FACTION_NAMES.clear()
+    FACTION_NAMES.update(entry.get("names", {}))
+
+
+def save_factions():
+    FACTIONS_DATA["campaigns"][CURRENT_CAMPAIGN[0]] = {"order": list(FACTION_ORDER), "names": dict(FACTION_NAMES)}
+    save_json(FACTIONS_FILE, {"campaign_order": FACTIONS_DATA.get("campaign_order", []),
+                              "campaigns": FACTIONS_DATA["campaigns"]})
+
+
+def faction_label(faction):
+    return FACTION_NAMES.get(faction, faction)
 
 
 def faction_key(faction):
@@ -130,6 +171,10 @@ def stylesheet():
     #center {{ background: {INK}; }}
     #panel {{ background: {PANEL}; border-left: 1px solid {LINE}; }}
     #composer {{ background: {NAV}; border-top: 1px solid {LINE}; }}
+    QPushButton#campaignCard {{ background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #2e2519, stop:1 {NAV});
+                                border: 1px solid {GOLD}; border-radius: 3px; padding: 0; }}
+    QPushButton#campaignCard:hover, QPushButton#campaignCard:focus {{ border-color: {GOLD_HI}; }}
+    #rail {{ background: {BAR}; border-right: 1px solid {LINE}; }}
     #previewCard {{ background: {INK}; border: 1px solid {LINE}; border-radius: 3px; }}
     #goldRule {{ background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 {GOLD}, stop:1 transparent);
                  max-height: 1px; min-height: 1px; border: 0; }}
@@ -167,6 +212,9 @@ def stylesheet():
     QPushButton#pill {{ background: transparent; border: 1px solid {LINE}; border-radius: 14px; padding: 5px 14px;
                         color: {MUTED}; font-size: 15px; }}
     QPushButton#pill:checked {{ background: {RAISED}; border-color: {GOLD}; color: {GOLD_HI}; }}
+    QPushButton#pill:hover {{ border-color: {GOLD}; }}
+    QPushButton#pill[compact="true"] {{ padding: 4px 11px; font-size: 14px; }}
+    QPushButton#pill:disabled {{ color: #6d6252; border-color: {LINE}; }}
     QPushButton#pillAdd {{ background: transparent; border: 1px dashed {LINE_HI}; border-radius: 14px;
                            padding: 5px 14px; color: {GOLD}; font-size: 15px; }}
     QPushButton#attach {{ background: transparent; border: 2px dashed {GOLD}; color: {GOLD};
@@ -199,6 +247,36 @@ def stylesheet():
     QMenu::separator {{ height: 1px; background: {LINE}; margin: 4px 8px; }}
 
     QSplitter::handle {{ background: {LINE}; }}
+    QScrollBar:horizontal {{ background: transparent; height: 10px; margin: 2px; }}
+    QScrollBar::handle:horizontal {{ background: {LINE}; border-radius: 3px; min-width: 30px; }}
+    QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {{ width: 0; }}
+
+    #tarot {{ background: qradialgradient(cx:0.45, cy:0.3, radius:0.85, fx:0.45, fy:0.3,
+                                          stop:0 #23244a, stop:0.75 #0d0d1f, stop:1 #0b0b19); }}
+    #tarot #nav {{ background: transparent; border-right: 1px solid {TAROT_LINE}; }}
+    #tarot QPushButton#navButton:hover {{ background: rgba(255, 255, 255, 14); }}
+    #tarot QPushButton#navButton:checked {{ background: rgba(232, 200, 114, 38); color: {TAROT_GOLD}; }}
+    #tarot QPushButton#campaignCard {{ background: rgba(232, 200, 114, 22); border-color: {TAROT_BRASS}; }}
+    #tarot QPushButton#campaignCard:hover {{ border-color: {TAROT_GOLD}; }}
+    #tarot #rail {{ background: transparent; border: 0; }}
+    #tarot #reading {{ background: rgba(11, 11, 25, 150); border-right: 1px solid {TAROT_LINE}; }}
+    #tarot #deck {{ background: rgba(9, 9, 22, 170); border-top: 1px solid {TAROT_LINE}; }}
+    #tarot #previewCard {{ background: rgba(20, 20, 44, 210); border-color: {TAROT_LINE}; border-radius: 6px; }}
+    #tarot QLineEdit, #tarot QComboBox {{ background: {TAROT_NIGHT}; border-color: {TAROT_LINE}; }}
+    #tarot QLineEdit:focus, #tarot QComboBox:focus {{ border-color: {TAROT_GOLD}; }}
+    #tarot QPlainTextEdit#message {{ background: {TAROT_NIGHT}; color: {TEXT}; border: 1px solid {TAROT_BRASS};
+                                     border-radius: 6px; }}
+    #tarot QPushButton#pill {{ border-color: {TAROT_LINE}; color: {TAROT_LAVENDER}; }}
+    #tarot QPushButton#pill:hover {{ border-color: {TAROT_GOLD}; }}
+    #tarot QPushButton#pill:checked {{ background: rgba(232, 200, 114, 38); border-color: {TAROT_GOLD}; color: {TAROT_GOLD}; }}
+    #tarot QPushButton#pill:disabled {{ color: #565486; border-color: #2a2950; }}
+    #tarot QScrollBar::handle {{ background: {TAROT_LINE}; }}
+    QPushButton#post {{ background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 {TAROT_GOLD}, stop:1 #b8923e);
+                        color: {TAROT_NIGHT}; border: 0; border-radius: 4px; font-family: "{DISPLAY_FAMILY}";
+                        font-size: 16px; font-weight: 700; letter-spacing: 3px; }}
+    QPushButton#post:hover {{ background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #f4d98e, stop:1 #c9a24c); }}
+    QPushButton#post:focus {{ border: 1px solid #fff3cf; }}
+    QPushButton#post:disabled {{ background: {TAROT_LINE}; color: #8d87c4; }}
     QStatusBar {{ background: {BAR}; color: {MUTED}; border-top: 1px solid {LINE}; font-size: 14px; }}
     QProgressDialog QLabel {{ color: {TEXT}; }}
     """
@@ -387,6 +465,7 @@ class PortraitTile(QWidget):
 
     clicked = pyqtSignal(str)
     favoriteToggled = pyqtSignal(str)
+    menuRequested = pyqtSignal(str, QPoint)
     moveRequested = pyqtSignal(str, int)
     W, H, D = 118, 138, 96
 
@@ -404,7 +483,8 @@ class PortraitTile(QWidget):
         self.setFixedSize(self.W, self.H)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.setToolTip(f'{self.name} — {character["faction"]}\nClick the star to favorite (or press F)')
+        self.setToolTip(f'{self.name} — {faction_label(character["faction"])}\n'
+                        'Click the star to favorite (or press F) · right-click to rename')
         self.setAccessibleName(self.name)
 
     def set_selected(self, on):
@@ -509,6 +589,9 @@ class PortraitTile(QWidget):
             self.moveRequested.emit(self.cid, -1 if e.key() == Qt.Key.Key_Left else 1)
         else:
             super().keyPressEvent(e)
+
+    def contextMenuEvent(self, e):
+        self.menuRequested.emit(self.cid, e.globalPos())
 
     def enterEvent(self, _):
         self.hover = True
@@ -639,6 +722,145 @@ class RosterSection(QWidget):
 
 # ---- profile banner ------------------------------------------------------
 
+class NavButton(QPushButton):
+    """An entry in the faction rail. Faction entries can be dragged (or Ctrl+Up/Down) to reorder them."""
+
+    moveRequested = pyqtSignal(str, int)
+
+    def __init__(self, icon, text, mode, draggable=False):
+        super().__init__(icon, text)
+        self.setObjectName("navButton")
+        self.setCheckable(True)
+        self.setProperty("mode", mode)
+        self.draggable = draggable
+        self._press_pos = None
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+
+    def mousePressEvent(self, e):
+        if e.button() == Qt.MouseButton.LeftButton:
+            self._press_pos = e.position().toPoint()
+        super().mousePressEvent(e)
+
+    def mouseMoveEvent(self, e):
+        if (self.draggable and self._press_pos is not None and e.buttons() & Qt.MouseButton.LeftButton
+                and (e.position().toPoint() - self._press_pos).manhattanLength()
+                >= QApplication.startDragDistance()):
+            self._press_pos = None
+            self.setDown(False)
+            mime = QMimeData()
+            mime.setData(FACTION_MIME, QByteArray(self.property("mode").encode()))
+            drag = QDrag(self)
+            drag.setMimeData(mime)
+            drag.setPixmap(self.grab())
+            drag.setHotSpot(e.position().toPoint())
+            drag.exec(Qt.DropAction.MoveAction)
+            return
+        super().mouseMoveEvent(e)
+
+    def keyPressEvent(self, e):
+        if (self.draggable and e.modifiers() & Qt.KeyboardModifier.ControlModifier
+                and e.key() in (Qt.Key.Key_Up, Qt.Key.Key_Down)):
+            self.moveRequested.emit(self.property("mode"), -1 if e.key() == Qt.Key.Key_Up else 1)
+        else:
+            super().keyPressEvent(e)
+
+
+class NavList(QWidget):
+    """Holds the rail's entries and takes faction drops, showing a gold line where one will land."""
+
+    dropped = pyqtSignal(str, int)  # faction, insertion index among the faction entries
+
+    def __init__(self):
+        super().__init__()
+        self.box = QVBoxLayout(self)
+        self.box.setContentsMargins(0, 0, 0, 0)
+        self.box.setSpacing(2)
+        self.setAcceptDrops(True)
+        self._marker = None
+
+    def faction_buttons(self):
+        items = (self.box.itemAt(i).widget() for i in range(self.box.count()))
+        return [b for b in items if isinstance(b, NavButton) and b.draggable]
+
+    def _index_at(self, y):
+        buttons = self.faction_buttons()
+        index = sum(1 for b in buttons if b.geometry().center().y() < y)
+        if not buttons:
+            return 0, None
+        line = buttons[index - 1].geometry().bottom() + 1 if index else buttons[0].geometry().top() - 1
+        return index, line
+
+    def dragEnterEvent(self, e):
+        if e.mimeData().hasFormat(FACTION_MIME):
+            e.acceptProposedAction()
+
+    def dragMoveEvent(self, e):
+        if e.mimeData().hasFormat(FACTION_MIME):
+            e.acceptProposedAction()
+            self._marker = self._index_at(e.position().y())[1]
+            self.update()
+
+    def dragLeaveEvent(self, _):
+        self._marker = None
+        self.update()
+
+    def dropEvent(self, e):
+        self._marker = None
+        self.update()
+        if e.mimeData().hasFormat(FACTION_MIME):
+            faction = bytes(e.mimeData().data(FACTION_MIME)).decode()
+            self.dropped.emit(faction, self._index_at(e.position().y())[0])
+            e.acceptProposedAction()
+
+    def paintEvent(self, e):
+        super().paintEvent(e)
+        if self._marker is not None:
+            p = QPainter(self)
+            p.setPen(QPen(QColor(GOLD_HI), 2))
+            p.drawLine(6, self._marker, self.width() - 6, self._marker)
+
+
+class CampaignCard(QPushButton):
+    """The campaign at the top of the faction menu. Click to switch; right-click for more."""
+
+    def __init__(self):
+        super().__init__()
+        self.setObjectName("campaignCard")
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        box = QVBoxLayout(self)
+        box.setContentsMargins(12, 8, 12, 9)
+        box.setSpacing(1)
+        cap = label("CAMPAIGN", font=display_font(9, QFont.Weight.DemiBold, 150))
+        cap.setStyleSheet(f"color: {MUTED}; background: transparent;")
+        row = QHBoxLayout()
+        row.setSpacing(6)
+        self.name = label("", font=display_font(15, QFont.Weight.Bold, 104))
+        self.name.setStyleSheet(f"color: {GOLD_HI}; background: transparent;")
+        self.name.setWordWrap(True)
+        arrow = label("▾")
+        arrow.setStyleSheet(f"color: {GOLD}; background: transparent;")
+        row.addWidget(self.name, 1)
+        row.addWidget(arrow, 0, Qt.AlignmentFlag.AlignTop)
+        box.addWidget(cap)
+        box.addLayout(row)
+        for w in (cap, self.name, arrow):
+            w.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+
+    def set_campaign(self, name):
+        self.name.setText(name or "No campaign")
+        self.setToolTip(f"{name}\nClick to switch campaign · right-click to rename or reorder")
+        self.setAccessibleName(f"Campaign: {name}")
+        self.updateGeometry()
+
+    def sizeHint(self):
+        return self.layout().sizeHint()
+
+    def minimumSizeHint(self):
+        return self.layout().minimumSize()
+
+
 class ProfileBanner(QWidget):
     """Faction-colored header with the selected character's portrait bleeding off the bottom right."""
 
@@ -654,7 +876,8 @@ class ProfileBanner(QWidget):
     def set_character(self, character, portrait: QPixmap):
         self.character = character
         self.portrait = portrait
-        self.setAccessibleName(f'{character["name"]}, {character["faction"]}' if character else "No character chosen")
+        self.setAccessibleName(f'{character["name"]}, {faction_label(character["faction"])}' if character
+                               else "No character chosen")
         self.update()
 
     def paintEvent(self, _):
@@ -687,7 +910,7 @@ class ProfileBanner(QWidget):
             p.setPen(ink)
             p.setFont(display_font(12, QFont.Weight.Bold, 124))
             p.drawText(QRectF(22, 0, w - 44, h - 64), Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom,
-                       self.character["faction"].upper())
+                       faction_label(self.character["faction"]).upper())
             p.setFont(display_font(32, QFont.Weight.Bold, 104))
             name = p.fontMetrics().elidedText(self.character["name"], Qt.TextElideMode.ElideRight, int(w * 0.6))
             p.drawText(QRectF(22, 0, w - 44, h - 18), Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom, name)
@@ -695,7 +918,242 @@ class ProfileBanner(QWidget):
         p.drawLine(QPointF(0, h - 0.5), QPointF(w, h - 0.5))
 
 
+# ---- tarot view ----------------------------------------------------------
+
+TAROT_GOLD = "#e8c872"
+TAROT_LAVENDER = "#b7b0e0"
+TAROT_NIGHT = "#14142c"
+TAROT_LINE = "#3b3a6a"
+TAROT_BRASS = "#6a5a2a"
+
+
+def draw_cover(p, target: QRectF, art: QPixmap):
+    """Fill target with art, cropping the sides or bottom and keeping the top (where faces are)."""
+    if art.isNull():
+        return
+    aw, ah = art.width(), art.height()
+    scale = max(target.width() / aw, target.height() / ah)
+    sw, sh = target.width() / scale, target.height() / scale
+    p.drawPixmap(target, art, QRectF((aw - sw) / 2, 0, sw, sh))
+
+
+class TarotStage(QWidget):
+    """Tarot view: the chosen character drawn as a large card, its neighbours in the deck tilted behind it."""
+
+    stepRequested = pyqtSignal(int)
+
+    def __init__(self):
+        super().__init__()
+        self.card = None  # (character, portrait)
+        self.prev = self.next = None
+        self.prev_rect = self.next_rect = QRectF()
+        self.setMinimumSize(320, 280)
+        self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.setToolTip("Click a side card, scroll, or press Left/Right to deal the next card")
+
+    def set_cards(self, card, prev=None, nxt=None):
+        self.card, self.prev, self.next = card, prev, nxt
+        self.setAccessibleName(f'{card[0]["name"]}, {faction_label(card[0]["faction"])}' if card
+                               else "No character chosen")
+        self.update()
+
+    @staticmethod
+    def draw_card(p, rect: QRectF, character, art: QPixmap, plate_px=17):
+        radius = rect.width() * 0.055
+        outline = QPainterPath()
+        outline.addRoundedRect(rect, radius, radius)
+        p.save()
+        p.setClipPath(outline)
+        p.fillRect(rect, QColor(FACTION_COLORS.get(character["faction"], GOLD)))
+        plate_h = plate_px * 3.3
+        draw_cover(p, QRectF(rect.left(), rect.top(), rect.width(), rect.height() - plate_h), art)
+        plate = QRectF(rect.left(), rect.bottom() - plate_h, rect.width(), plate_h)
+        p.fillRect(plate, QColor(TAROT_NIGHT))
+        p.setPen(QPen(QColor(TAROT_GOLD), 1))
+        p.drawLine(plate.topLeft(), plate.topRight())
+        p.setFont(display_font(plate_px, QFont.Weight.Bold, 106))
+        name = p.fontMetrics().elidedText(character["name"], Qt.TextElideMode.ElideRight, int(rect.width() - 16))
+        p.drawText(plate.adjusted(8, 4, -8, -plate_h * 0.42), Qt.AlignmentFlag.AlignCenter, name)
+        p.setPen(QColor(TAROT_LAVENDER))
+        p.setFont(body_font(max(11, int(plate_px * 0.82)), italic=True))
+        faction = p.fontMetrics().elidedText(faction_label(character["faction"]), Qt.TextElideMode.ElideRight,
+                                             int(rect.width() - 16))
+        p.drawText(plate.adjusted(8, plate_h * 0.5, -8, -4), Qt.AlignmentFlag.AlignCenter, faction)
+        p.restore()
+        p.setBrush(Qt.BrushStyle.NoBrush)
+        p.setPen(QPen(QColor(TAROT_BRASS), 1))
+        p.drawRoundedRect(rect.adjusted(-7, -7, 7, 7), radius + 6, radius + 6)
+        p.setPen(QPen(QColor(TAROT_NIGHT), 5))
+        p.drawRoundedRect(rect.adjusted(-3.5, -3.5, 3.5, 3.5), radius + 3, radius + 3)
+        p.setPen(QPen(QColor(TAROT_GOLD), 2))
+        p.drawRoundedRect(rect, radius, radius)
+
+    def paintEvent(self, _):
+        p = QPainter(self)
+        p.setRenderHint(QPainter.RenderHint.Antialiasing)
+        p.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform)
+        if not self.card:
+            p.setPen(QColor(TAROT_LAVENDER))
+            p.setFont(body_font(20, italic=True))
+            p.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter, "Choose a card from the deck.")
+            return
+        h = min(self.height() - 36, 470)
+        w = h * 0.64
+        c = QPointF(self.width() / 2, self.height() / 2)
+        gh, gw = h * 0.66, w * 0.66
+        offset = min(w * 0.95, (self.width() - gw) / 2 - 8)
+        self.prev_rect = QRectF(c.x() - offset - gw / 2, c.y() - gh / 2, gw, gh)
+        self.next_rect = QRectF(c.x() + offset - gw / 2, c.y() - gh / 2, gw, gh)
+        for card, rect, angle in ((self.prev, self.prev_rect, -10), (self.next, self.next_rect, 9)):
+            if card:
+                p.save()
+                p.setOpacity(0.45)
+                p.translate(rect.center())
+                p.rotate(angle)
+                self.draw_card(p, QRectF(-gw / 2, -gh / 2, gw, gh), card[0], card[1], plate_px=12)
+                p.restore()
+        p.translate(c)
+        p.rotate(-2)
+        self.draw_card(p, QRectF(-w / 2, -h / 2, w, h), self.card[0], self.card[1], plate_px=max(14, int(h / 24)))
+
+    def mousePressEvent(self, e):
+        self.setFocus()
+        if self.prev and self.prev_rect.contains(e.position()):
+            self.stepRequested.emit(-1)
+        elif self.next and self.next_rect.contains(e.position()):
+            self.stepRequested.emit(1)
+
+    def wheelEvent(self, e):
+        dy = e.angleDelta().y() or e.angleDelta().x()
+        if dy:
+            self.stepRequested.emit(-1 if dy > 0 else 1)
+
+    def keyPressEvent(self, e):
+        step = {Qt.Key.Key_Left: -1, Qt.Key.Key_Right: 1}.get(e.key())
+        if step:
+            self.stepRequested.emit(step)
+        else:
+            super().keyPressEvent(e)
+
+
+class DeckCard(QWidget):
+    """A small card in the tarot deck; the chosen one rises out of the row."""
+
+    clicked = pyqtSignal(str)
+    menuRequested = pyqtSignal(str, QPoint)
+    stepRequested = pyqtSignal(int)
+    W, H, LIFT = 88, 136, 12
+
+    def __init__(self, cid, character, avatar: QPixmap):
+        super().__init__()
+        self.cid = cid
+        self.character = character
+        self.avatar = avatar
+        self.selected = self.hover = False
+        self.setFixedSize(self.W + 2, self.H + self.LIFT + 2)
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.refresh_text()
+
+    def refresh_text(self):
+        c = self.character
+        self.setToolTip(f'{c["name"]} — {faction_label(c["faction"])}\nRight-click to rename or favorite')
+        self.setAccessibleName(c["name"])
+        self.update()
+
+    def set_selected(self, on):
+        if on != self.selected:
+            self.selected = on
+            self.update()
+
+    def set_avatar(self, avatar):
+        self.avatar = avatar
+        self.update()
+
+    def paintEvent(self, _):
+        p = QPainter(self)
+        p.setRenderHint(QPainter.RenderHint.Antialiasing)
+        p.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform)
+        lift = 0 if self.selected else (self.LIFT / 2 if self.hover or self.hasFocus() else self.LIFT)
+        rect = QRectF(1, 1 + lift, self.W, self.H)
+        clip = QPainterPath()
+        clip.addRoundedRect(rect, 8, 8)
+        p.save()
+        p.setClipPath(clip)
+        p.fillRect(rect, QColor(TAROT_NIGHT))
+        draw_cover(p, QRectF(rect.left(), rect.top(), rect.width(), rect.height() - 22), self.avatar)
+        p.setPen(QColor(TEXT))
+        p.setFont(display_font(10, QFont.Weight.DemiBold, 100))
+        name = p.fontMetrics().elidedText(self.character["name"], Qt.TextElideMode.ElideRight, int(rect.width() - 8))
+        p.drawText(QRectF(rect.left() + 4, rect.bottom() - 22, rect.width() - 8, 22), Qt.AlignmentFlag.AlignCenter, name)
+        p.restore()
+        if self.character.get("favorite"):
+            p.setPen(Qt.PenStyle.NoPen)
+            p.setBrush(QColor(TAROT_GOLD))
+            p.drawPolygon(star_polygon(QPointF(rect.right() - 11, rect.top() + 11), 7, 3))
+        p.setBrush(Qt.BrushStyle.NoBrush)
+        p.setPen(QPen(QColor(TAROT_GOLD if self.selected else (GOLD if self.hover else TAROT_BRASS)),
+                      2 if self.selected else 1))
+        p.drawRoundedRect(rect, 8, 8)
+
+    def mouseReleaseEvent(self, e):
+        if e.button() == Qt.MouseButton.LeftButton and self.rect().contains(e.position().toPoint()):
+            self.clicked.emit(self.cid)
+
+    def contextMenuEvent(self, e):
+        self.menuRequested.emit(self.cid, e.globalPos())
+
+    def keyPressEvent(self, e):
+        step = {Qt.Key.Key_Left: -1, Qt.Key.Key_Right: 1}.get(e.key())
+        if step:
+            self.stepRequested.emit(step)
+        elif e.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter, Qt.Key.Key_Space):
+            self.clicked.emit(self.cid)
+        else:
+            super().keyPressEvent(e)
+
+    def enterEvent(self, _):
+        self.hover = True
+        self.update()
+
+    def leaveEvent(self, _):
+        self.hover = False
+        self.update()
+
+    def focusInEvent(self, e):
+        super().focusInEvent(e)
+        self.update()
+
+    def focusOutEvent(self, e):
+        super().focusOutEvent(e)
+        self.update()
+
+
+class DeckScroll(QScrollArea):
+    """Sideways-scrolling deck: the mouse wheel moves it left and right."""
+
+    def wheelEvent(self, e):
+        bar = self.horizontalScrollBar()
+        bar.setValue(bar.value() - (e.angleDelta().y() or e.angleDelta().x()))
+
+
 # ---- message preview ---------------------------------------------------
+
+class MessageEdit(QPlainTextEdit):
+    """Enter sends; Ctrl+Enter (or Shift+Enter) starts a new line."""
+
+    submitted = pyqtSignal()
+
+    def keyPressEvent(self, e):
+        if e.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
+            mods = e.modifiers() & ~Qt.KeyboardModifier.KeypadModifier
+            if mods & (Qt.KeyboardModifier.ControlModifier | Qt.KeyboardModifier.ShiftModifier):
+                self.insertPlainText("\n")
+            elif mods == Qt.KeyboardModifier.NoModifier:
+                self.submitted.emit()
+            return
+        super().keyPressEvent(e)
+
 
 class AttachmentThumb(QWidget):
     removed = pyqtSignal(str)
@@ -824,13 +1282,162 @@ class ChannelPills(QWidget):
         menu.exec(button.mapToGlobal(QPoint(0, button.height())))
 
 
+class ServerBadge(QAbstractButton):
+    """A server in the rail: a round badge with its image (or initials); the selected one squares off and gets a bar."""
+
+    W, D = 58, 38
+
+    def __init__(self, text, tooltip, dashed=False, image=None, horizontal=False):
+        super().__init__()
+        self.text_ = text
+        self.image = image if image and not image.isNull() else None
+        self.dashed = dashed
+        self.hover = False
+        self.horizontal = horizontal  # in a row: the selected bar sits underneath instead of to the left
+        self.setFixedSize(*((self.D + 8, self.D + 8) if horizontal else (self.W, self.D + 4)))
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.setToolTip(tooltip)
+        self.setAccessibleName(tooltip)
+
+    def enterEvent(self, _):
+        self.hover = True
+        self.update()
+
+    def leaveEvent(self, _):
+        self.hover = False
+        self.update()
+
+    def paintEvent(self, _):
+        p = QPainter(self)
+        p.setRenderHint(QPainter.RenderHint.Antialiasing)
+        on = self.isChecked()
+        r = QRectF((self.width() - self.D) / 2, 2, self.D, self.D)
+        if self.dashed:
+            pen = QPen(QColor(GOLD_HI if self.hover else GOLD), 1.2, Qt.PenStyle.DashLine)
+            p.setPen(pen)
+            p.setBrush(Qt.BrushStyle.NoBrush)
+            p.drawEllipse(r.adjusted(0.5, 0.5, -0.5, -0.5))
+        else:
+            radius = 11 if on else self.D / 2
+            shape = r.adjusted(0.5, 0.5, -0.5, -0.5)
+            p.setPen(Qt.PenStyle.NoPen)
+            p.setBrush(QColor("#3a2f20" if on else RAISED))
+            p.drawRoundedRect(shape, radius, radius)
+            if self.image:
+                clip = QPainterPath()
+                clip.addRoundedRect(shape, radius, radius)
+                p.save()
+                p.setClipPath(clip)
+                p.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform)
+                p.drawPixmap(shape, self.image, QRectF(self.image.rect()))
+                p.restore()
+            p.setPen(QPen(QColor(GOLD if on or self.hover or self.hasFocus() else LINE_HI), 1.2))
+            p.setBrush(Qt.BrushStyle.NoBrush)
+            p.drawRoundedRect(shape, radius, radius)
+        if on:
+            p.setPen(Qt.PenStyle.NoPen)
+            p.setBrush(QColor(GOLD_HI))
+            if self.horizontal:
+                p.drawRoundedRect(QRectF(r.left() + 7, self.height() - 3, r.width() - 14, 6), 3, 3)
+            else:
+                p.drawRoundedRect(QRectF(-3, r.top() + 7, 6, r.height() - 14), 3, 3)
+        if self.image:
+            return
+        p.setPen(QColor(GOLD_HI if on else (GOLD if self.dashed else MUTED)))
+        p.setFont(body_font(20) if self.dashed else display_font(12, QFont.Weight.Bold, 100))
+        p.drawText(r, Qt.AlignmentFlag.AlignCenter, self.text_)
+
+
+class ServerRail(QWidget):
+    """The strip of server badges down the left of the composer."""
+
+    selected = pyqtSignal(str)
+    addRequested = pyqtSignal()
+    renameRequested = pyqtSignal(str)
+    removeRequested = pyqtSignal(str)
+    imageRequested = pyqtSignal(str)
+    imageCleared = pyqtSignal(str)
+
+    def __init__(self):
+        super().__init__()
+        self.icons = {}
+        self.horizontal = False
+        self.shown = None
+        self.setObjectName("rail")
+        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+        self.setFixedWidth(ServerBadge.W)
+        self.box = QVBoxLayout(self)
+        self.box.setContentsMargins(0, 14, 0, 14)
+        self.box.setSpacing(8)
+        self.box.setAlignment(Qt.AlignmentFlag.AlignTop)
+        self.group = QButtonGroup(self)
+        self.group.setExclusive(True)
+        self.group.buttonClicked.connect(lambda b: self.selected.emit(b.property("server")))
+
+    def set_horizontal(self, on):
+        """Lay the badges out in a row (tarot view) or a column (classic view)."""
+        if on == self.horizontal:
+            return
+        self.horizontal = on
+        if on:
+            self.setMinimumWidth(0)
+            self.setMaximumWidth(16777215)
+            self.setFixedHeight(ServerBadge.D + 8)
+            self.box.setDirection(QVBoxLayout.Direction.LeftToRight)
+            self.box.setContentsMargins(0, 0, 0, 0)
+            self.box.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        else:
+            self.setMinimumHeight(0)
+            self.setMaximumHeight(16777215)
+            self.setFixedWidth(ServerBadge.W)
+            self.box.setDirection(QVBoxLayout.Direction.TopToBottom)
+            self.box.setContentsMargins(0, 14, 0, 14)
+            self.box.setAlignment(Qt.AlignmentFlag.AlignTop)
+        if self.shown is not None:
+            self.set_servers(*self.shown)
+
+    def set_servers(self, names, current, icons=None):
+        self.shown = (names, current, icons)
+        self.icons = icons or {}
+        for b in self.group.buttons():
+            self.group.removeButton(b)
+        while self.box.count():
+            self.box.takeAt(0).widget().deleteLater()
+        for name in names:
+            b = ServerBadge(servers.initials(name), f"{name}\nRight-click to rename, set its image or remove",
+                            image=self.icons.get(name), horizontal=self.horizontal)
+            b.setCheckable(True)
+            b.setChecked(name == current)
+            b.setProperty("server", name)
+            b.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+            b.customContextMenuRequested.connect(lambda _, n=name, btn=b: self._menu(n, btn))
+            self.group.addButton(b)
+            self.box.addWidget(b)
+        add = ServerBadge("+", "Add a server (paste a webhook from one of its channels)", dashed=True,
+                          horizontal=self.horizontal)
+        add.clicked.connect(self.addRequested)
+        self.box.addWidget(add)
+
+    def _menu(self, name, button):
+        menu = QMenu(self)
+        menu.addAction("Rename server…", lambda: self.renameRequested.emit(name))
+        menu.addAction("Set server image…", lambda: self.imageRequested.emit(name))
+        if self.icons.get(name):
+            menu.addAction("Remove server image", lambda: self.imageCleared.emit(name))
+        menu.addSeparator()
+        menu.addAction(f'Remove "{name}"…', lambda: self.removeRequested.emit(name))
+        menu.exec(button.mapToGlobal(QPoint(button.width() - 8, button.height() // 2)))
+
+
 # ---- dialogs -------------------------------------------------------------
 
 class AddChannelDialog(QDialog):
-    def __init__(self, parent, existing_names):
+    """Asks for a channel name and webhook, and checks the webhook with Discord (which says which server it's in)."""
+
+    def __init__(self, parent, new_server=False):
         super().__init__(parent)
-        self.setWindowTitle("Add channel")
-        self.existing = existing_names
+        self.setWindowTitle("Add server" if new_server else "Add channel")
+        self.info = {}
         self.name = QLineEdit()
         self.url = QLineEdit()
         self.url.setPlaceholderText("https://discord.com/api/webhooks/…")
@@ -838,27 +1445,26 @@ class AddChannelDialog(QDialog):
         form = QFormLayout(self)
         form.addRow("Channel name:", self.name)
         form.addRow("Webhook URL:", self.url)
-        form.addRow(label("The webhook is checked with Discord before it's saved.", "muted"))
+        hint = ("Paste a webhook from any channel in the new server; you'll name the server next."
+                if new_server else
+                "The webhook is checked with Discord before it's saved, and filed under its server.")
+        form.addRow(label(hint, "muted"))
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
         buttons.accepted.connect(self.try_accept)
         buttons.rejected.connect(self.reject)
         form.addRow(buttons)
-        self.resize(520, 0)
+        self.resize(560, 0)
 
     def try_accept(self):
-        name, url = self.name.text().strip(), self.url.text().strip()
-        if not name:
-            return QMessageBox.warning(self, "Add channel", "Give the channel a name.")
-        if name in self.existing:
-            return QMessageBox.warning(self, "Add channel", f'A channel called "{name}" already exists.')
+        if not self.name.text().strip():
+            return QMessageBox.warning(self, self.windowTitle(), "Give the channel a name.")
         QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
         try:
-            info = discord_client.fetch_webhook_info(url)
+            self.info = discord_client.fetch_webhook_info(self.url.text().strip())
         except discord_client.WebhookError as e:
-            return QMessageBox.warning(self, "Add channel", str(e))
+            return QMessageBox.warning(self, self.windowTitle(), str(e))
         finally:
             QApplication.restoreOverrideCursor()
-        self.webhook_name = info.get("name", "")
         self.accept()
 
 
@@ -1048,7 +1654,7 @@ class FramingDialog(QDialog):
         side = QVBoxLayout()
         side.setSpacing(12)
         side.addWidget(label(character["name"], font=display_font(22)))
-        side.addWidget(label(character["faction"], "muted", body_font(15, italic=True)))
+        side.addWidget(label(faction_label(character["faction"]), "muted", body_font(15, italic=True)))
         tabs = QHBoxLayout()
         tabs.setSpacing(6)
         self.tab_group = QButtonGroup(self)
@@ -1176,10 +1782,18 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("Set in Stone Character Board")
         self.characters = characters
-        self.channels = load_json(CHANNELS_FILE, {})
         self.settings = load_json(SETTINGS_FILE, {"avatar_base_url": ""})
         self.history = load_json(HISTORY_FILE, {})
         self.ui_state = QSettings("SetInStone", "CharacterBoard")
+        load_factions("")
+        self.campaign = self.ui_state.value("campaign") or catalog.DEFAULT_CAMPAIGN
+        if self.campaign not in self.campaign_list():
+            self.campaign = next(iter(self.campaign_list()), catalog.DEFAULT_CAMPAIGN)
+        load_factions(self.campaign)
+        self.selected_by_campaign = json.loads(self.ui_state.value("character_by_campaign", "{}") or "{}")
+        self.last_channel = json.loads(self.ui_state.value("last_channels", "{}") or "{}")
+        self.servers = self._load_servers()
+        self.current_server = self.ui_state.value("server") or ""
         self.worker = None
         self.warned_no_avatar = False
         self.selected_cid = None
@@ -1187,14 +1801,19 @@ class MainWindow(QMainWindow):
         self.tiles = {}
         self.sections = []
         self.pixmaps = {}
+        self.portraits = {}
+        self.deck_cards = {}
+        self.slots, self.shared = {}, {}
+        self.view = "classic"
         self.mode = ALL
         self.setAcceptDrops(True)
 
         self._build_ui()
         self.populate_nav()
         self.populate_roster()
-        self.populate_channels(self.ui_state.value("channel"))
+        self.populate_servers(self.current_server)
         self._restore_state()
+        self.set_view(self.ui_state.value("view") or "classic")
         self.refresh_preview()
 
     # ---- construction -------------------------------------------------
@@ -1209,19 +1828,20 @@ class MainWindow(QMainWindow):
         self.splitter = QSplitter()
         self.splitter.setHandleWidth(1)
         self.splitter.setChildrenCollapsible(False)
-        self.splitter.addWidget(self._build_nav())
+        self.splitter.addWidget(self.slot("nav", "classic", self._build_nav()))
         self.splitter.addWidget(self._build_center())
         self.splitter.addWidget(self._build_panel())
         self.splitter.setStretchFactor(1, 1)
         self.splitter.setSizes([260, 710, 510])
-        rl.addWidget(self.splitter, 1)
+        self.stack = QStackedWidget()
+        self.stack.addWidget(self.splitter)
+        self.stack.addWidget(self._build_tarot())
+        rl.addWidget(self.stack, 1)
         self.setCentralWidget(root)
         self.statusBar()
         self.resize(1500, 900)
         self.setMinimumSize(1400, 760)
 
-        QShortcut(QKeySequence("Ctrl+Return"), self, activated=self.send)
-        QShortcut(QKeySequence("Ctrl+Enter"), self, activated=self.send)
         QShortcut(QKeySequence("Ctrl+F"), self, activated=lambda: self.search.setFocus())
 
     def _build_header(self):
@@ -1242,6 +1862,23 @@ class MainWindow(QMainWindow):
         hl.addWidget(banner)
         hl.addWidget(title)
         hl.addStretch()
+        view_button = QToolButton()
+        view_button.setObjectName("fileMenu")
+        view_button.setText("View  ▾")
+        view_button.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
+        view_menu = QMenu(view_button)
+        group = QActionGroup(self)
+        self.view_actions = {}
+        for i, (key, text) in enumerate(VIEWS.items()):
+            action = view_menu.addAction(text)
+            action.setCheckable(True)
+            action.setShortcut(QKeySequence(f"Ctrl+{i + 1}"))
+            action.triggered.connect(lambda _=False, k=key: self.set_view(k))
+            group.addAction(action)
+            self.addAction(action)
+            self.view_actions[key] = action
+        view_button.setMenu(view_menu)
+        hl.addWidget(view_button)
         menu_button = QToolButton()
         menu_button.setObjectName("fileMenu")
         menu_button.setText("File  ▾")
@@ -1249,7 +1886,7 @@ class MainWindow(QMainWindow):
         menu = QMenu(menu_button)
         menu.addAction("Rescan portraits", lambda: self.resync(force=False))
         menu.addAction("Rebuild all avatars", lambda: self.resync(force=True))
-        menu.addAction("Edit framing…", self.edit_framing)
+        menu.addAction("Edit Framing…", self.edit_framing)
         menu.addSeparator()
         menu.addAction("Settings…", self.open_settings)
         menu.addSeparator()
@@ -1265,17 +1902,33 @@ class MainWindow(QMainWindow):
         layout = QVBoxLayout(nav)
         layout.setContentsMargins(14, 22, 14, 14)
         layout.setSpacing(2)
+        self.campaign_card = CampaignCard()
+        self.campaign_card.set_campaign(self.campaign)
+        self.campaign_card.clicked.connect(self.campaign_menu)
+        self.campaign_card.customContextMenuRequested.connect(lambda _: self.campaign_context_menu())
+        layout.addWidget(self.campaign_card)
+        layout.addSpacing(14)
         heading = label("FACTIONS", font=display_font(12, QFont.Weight.DemiBold, 124))
         heading.setStyleSheet(f"color: {MUTED}; padding: 0 10px 10px;")
         layout.addWidget(heading)
         self.nav_group = QButtonGroup(self)
         self.nav_group.setExclusive(True)
         self.nav_group.buttonClicked.connect(lambda b: self.set_mode(b.property("mode")))
-        self.nav_layout = QVBoxLayout()
-        self.nav_layout.setSpacing(2)
-        layout.addLayout(self.nav_layout)
+        self.nav_list = NavList()
+        self.nav_list.dropped.connect(self.move_faction)
+        self.nav_layout = self.nav_list.box
+        layout.addWidget(self.nav_list)
+        hint = label("Drag factions to reorder · right-click to rename", "muted", body_font(13, italic=True))
+        hint.setStyleSheet("padding: 10px 10px 0;")
+        hint.setWordWrap(True)
+        layout.addWidget(hint)
         layout.addStretch()
-        return nav
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll.setWidget(nav)
+        self.nav_scroll = scroll
+        return scroll
 
     def _build_center(self):
         center = QWidget()
@@ -1305,9 +1958,9 @@ class MainWindow(QMainWindow):
         top.addWidget(self.title)
         top.addWidget(self.count, 0, Qt.AlignmentFlag.AlignVCenter)
         top.addStretch()
-        top.addWidget(self.search)
+        top.addWidget(self.slot("search", "classic", self.search))
         top.addWidget(label("Sort by", "muted", body_font(15)))
-        top.addWidget(self.sort_combo)
+        top.addWidget(self.slot("sort", "classic", self.sort_combo))
         layout.addLayout(top)
         rule = QFrame()
         rule.setObjectName("goldRule")
@@ -1369,21 +2022,37 @@ class MainWindow(QMainWindow):
         hl.addWidget(card)
         hl.addStretch()
         card_scroll.setWidget(holder)
-        pl.addWidget(card_scroll, 1)
-        self.context_hint = label("The faded line is the last message sent from here to this channel.",
-                                  "muted", body_font(14, italic=True))
-        self.context_hint.setWordWrap(True)
-        pl.addWidget(self.context_hint)
+        pl.addWidget(self.slot("preview", "classic", card_scroll), 1)
+        # The preview takes whatever height is left (its card scrolls), so the composer is never squeezed.
+        preview.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Ignored)
         layout.addWidget(preview, 1)
 
         # Composer (bottom)
-        composer = QWidget()
+        composer = self.composer = QWidget()
         composer.setObjectName("composer")
-        col = QVBoxLayout(composer)
-        col.setContentsMargins(24, 16, 24, 18)
+        composer_row = QHBoxLayout(composer)
+        composer_row.setContentsMargins(0, 0, 0, 0)
+        composer_row.setSpacing(0)
+        self.rail = ServerRail()
+        self.rail.selected.connect(self.select_server)
+        self.rail.addRequested.connect(lambda: self.add_channel(new_server=True))
+        self.rail.renameRequested.connect(self.rename_server)
+        self.rail.removeRequested.connect(self.remove_server)
+        self.rail.imageRequested.connect(self.set_server_image)
+        self.rail.imageCleared.connect(self.clear_server_image)
+        composer_row.addWidget(self.slot("rail", "classic", self.rail))
+        body = QWidget()
+        composer_row.addWidget(body, 1)
+        col = QVBoxLayout(body)
+        col.setContentsMargins(20, 14, 20, 16)
         col.setSpacing(12)
+        self.server_label = label("", font=display_font(13, QFont.Weight.DemiBold, 118))
+        self.server_label.setStyleSheet(f"color: {GOLD};")
+        col.addWidget(self.server_label)
 
-        as_row = QHBoxLayout()
+        as_box = QWidget()
+        as_row = QHBoxLayout(as_box)
+        as_row.setContentsMargins(0, 0, 0, 0)
         as_row.setSpacing(8)
         as_row.addWidget(label("As", "muted", body_font(16, italic=True)))
         self.name_edit = QLineEdit()
@@ -1394,24 +2063,19 @@ class MainWindow(QMainWindow):
         reset.setObjectName("ghost")
         reset.setToolTip("Go back to the character's default name")
         reset.clicked.connect(self.reset_name)
-        save = QPushButton("Save as default")
-        save.setObjectName("ghost")
-        save.setToolTip("Make this the character's default display name")
-        save.clicked.connect(self.save_default_name)
         as_row.addWidget(self.name_edit, 1)
         as_row.addWidget(reset)
-        as_row.addWidget(save)
-        col.addLayout(as_row)
+        col.addWidget(self.slot("as", "classic", as_box))
 
         to_row = QHBoxLayout()
         to_row.setSpacing(8)
         to_label = label("to", "muted", body_font(16, italic=True))
         to_row.addWidget(to_label, 0, Qt.AlignmentFlag.AlignTop)
         self.pills = ChannelPills()
-        self.pills.selected.connect(lambda _: self.refresh_preview())
+        self.pills.selected.connect(self.select_channel)
         self.pills.addRequested.connect(self.add_channel)
         self.pills.removeRequested.connect(self.remove_channel)
-        to_row.addWidget(self.pills, 1)
+        to_row.addWidget(self.slot("pills", "classic", self.pills), 1)
         col.addLayout(to_row)
 
         write_row = QHBoxLayout()
@@ -1424,11 +2088,13 @@ class MainWindow(QMainWindow):
         attach.setToolTip("Attach images (or drop them anywhere on the window)")
         attach.setAccessibleName("Attach images")
         attach.clicked.connect(self.add_images)
-        self.message = QPlainTextEdit()
+        self.message = MessageEdit()
         self.message.setObjectName("message")
         self.message.setFont(body_font(18))
         self.message.setPlaceholderText("Write your words…")
-        self.message.setFixedHeight(110)
+        self.message.setFixedHeight(88)
+        self.message.setToolTip("Enter to send · Ctrl+Enter for a new line")
+        self.message.submitted.connect(self.send)
         self.message.setAccessibleName("Message")
         placeholder_palette = self.message.palette()
         placeholder_palette.setColor(QPalette.ColorRole.PlaceholderText, QColor("#7a6a50"))
@@ -1440,58 +2106,299 @@ class MainWindow(QMainWindow):
         self.send_btn.setCursor(Qt.CursorShape.PointingHandCursor)
         self.send_btn.clicked.connect(self.send)
         write_row.addWidget(attach, 0, Qt.AlignmentFlag.AlignTop)
-        write_row.addWidget(self.message, 1)
-        write_row.addWidget(self.send_btn, 0, Qt.AlignmentFlag.AlignTop)
+        write_row.addWidget(self.slot("message", "classic", self.message), 1)
+        send_col = QVBoxLayout()
+        send_col.setSpacing(6)
+        send_col.addWidget(self.send_btn)
+        self.counter = label("", "muted", body_font(14))
+        send_col.addWidget(self.slot("counter", "classic", self.counter, Qt.AlignmentFlag.AlignRight))
+        send_col.addStretch()
+        write_row.addLayout(send_col)
         col.addLayout(write_row)
 
         col.addSpacing(10)
         foot = QHBoxLayout()
-        self.zoom_toggle = QCheckBox("Zoomed avatar")
-        self.zoom_toggle.setFont(body_font(15))
+        foot_buttons = QWidget()
+        foot_flow = FlowLayout(foot_buttons, hspacing=6, vspacing=6)
+        self.zoom_toggle = QPushButton("Zoomed Avatar")
+        self.zoom_toggle.setObjectName("pill")
+        self.zoom_toggle.setCheckable(True)
         self.zoom_toggle.setCursor(Qt.CursorShape.PointingHandCursor)
         self.zoom_toggle.setChecked(self.ui_state.value("zoom", False, type=bool))
         self.zoom_toggle.toggled.connect(lambda _: self.refresh_preview())
-        foot.addWidget(self.zoom_toggle)
-        self.framing_btn = QPushButton("Edit framing…")
-        self.framing_btn.setObjectName("ghost")
+        foot_flow.addWidget(self.zoom_toggle)
+        self.framing_btn = QPushButton("Edit Framing")
+        self.framing_btn.setObjectName("pill")
         self.framing_btn.setCursor(Qt.CursorShape.PointingHandCursor)
         self.framing_btn.setToolTip("Move or zoom this character's avatar and save it as the default")
         self.framing_btn.clicked.connect(self.edit_framing)
-        foot.addWidget(self.framing_btn)
-        foot.addStretch()
-        self.counter = label("", "muted", body_font(14))
-        foot.addWidget(self.counter)
+        foot_flow.addWidget(self.framing_btn)
+        save = QPushButton("Save as Default")
+        save.setObjectName("pill")
+        save.setCursor(Qt.CursorShape.PointingHandCursor)
+        save.setToolTip("Make the \"As\" name this character's default display name")
+        save.clicked.connect(self.save_default_name)
+        foot_flow.addWidget(save)
+        for b in (self.zoom_toggle, self.framing_btn, save):
+            b.setProperty("compact", True)
+        foot.addWidget(foot_buttons, 1)
         col.addLayout(foot)
         layout.addWidget(composer)
         return panel
+
+    # ---- views --------------------------------------------------------
+
+    def slot(self, key, view, widget=None, align=None):
+        """An empty holder for a widget that both views share; set_view moves the widget between holders."""
+        holder = QWidget()
+        box = QVBoxLayout(holder)
+        box.setContentsMargins(0, 0, 0, 0)
+        box.setSizeConstraint(QLayout.SizeConstraint.SetMinAndMaxSize)
+        if align is not None:
+            box.setAlignment(align)
+        self.slots.setdefault(key, {})[view] = holder
+        if widget is not None:
+            self.shared[key] = widget
+            box.addWidget(widget)
+        return holder
+
+    def set_view(self, view):
+        if view not in VIEWS:
+            view = "classic"
+        self.view = view
+        for key, widget in self.shared.items():
+            self.slots[key][view].layout().addWidget(widget)
+        self.rail.set_horizontal(view == "tarot")
+        self.stack.setCurrentIndex(list(VIEWS).index(view))
+        self.view_actions[view].setChecked(True)
+        if view == "classic":
+            self.fit_composer()
+        else:
+            self.update_stage()
+            card = self.deck_cards.get(self.selected_cid)
+            if card:
+                QTimer.singleShot(0, lambda: self.deck_scroll.ensureWidgetVisible(card, 60, 0))
+
+    def _build_tarot(self):
+        tarot = QWidget()
+        tarot.setObjectName("tarot")
+        tarot.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+        # The faction menu runs the full height; the message panel, stage and deck share the rest.
+        root = QHBoxLayout(tarot)
+        root.setContentsMargins(0, 0, 0, 0)
+        root.setSpacing(0)
+        root.addWidget(self.slot("nav", "tarot"))
+        right = QVBoxLayout()
+        right.setSpacing(0)
+        top = QHBoxLayout()
+        top.setSpacing(0)
+
+        stage_col = QVBoxLayout()
+        stage_col.setContentsMargins(24, 18, 24, 6)
+        stage_col.setSpacing(6)
+        head = QHBoxLayout()
+        head.setSpacing(12)
+        self.tarot_title = label("", font=display_font(24, QFont.Weight.Bold, 106))
+        self.tarot_title.setStyleSheet(f"color: {TAROT_GOLD};")
+        self.tarot_count = label("", font=body_font(17, italic=True))
+        self.tarot_count.setStyleSheet(f"color: {TAROT_LAVENDER};")
+        head.addWidget(self.tarot_title)
+        head.addWidget(self.tarot_count, 0, Qt.AlignmentFlag.AlignVCenter)
+        head.addStretch()
+        head.addWidget(self.slot("search", "tarot"))
+        sort_label = label("Sort by", font=body_font(15))
+        sort_label.setStyleSheet(f"color: {TAROT_LAVENDER};")
+        head.addWidget(sort_label)
+        head.addWidget(self.slot("sort", "tarot"))
+        stage_col.addLayout(head)
+        self.stage = TarotStage()
+        self.stage.stepRequested.connect(self.step_card)
+        stage_col.addWidget(self.stage, 1)
+
+        reading = QWidget()
+        reading.setObjectName("reading")
+        reading.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+        reading.setFixedWidth(410)
+        rl = QVBoxLayout(reading)
+        rl.setContentsMargins(20, 16, 20, 16)
+        rl.setSpacing(10)
+        rhead = QHBoxLayout()
+        rhead.setSpacing(10)
+        heading = label("MESSAGE", font=display_font(12, QFont.Weight.DemiBold, 124))
+        heading.setStyleSheet("color: #8d87c4;")
+        self.tarot_where = label("", font=body_font(15, italic=True))
+        self.tarot_where.setStyleSheet(f"color: {TAROT_LAVENDER};")
+        self.tarot_where.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
+        rhead.addWidget(heading)
+        rhead.addWidget(self.tarot_where, 1)
+        rhead.addWidget(self.slot("counter", "tarot"))
+        rl.addLayout(rhead)
+        rl.addWidget(self.slot("rail", "tarot"))
+        rl.addWidget(self.slot("pills", "tarot"))
+        rl.addWidget(self.slot("as", "tarot"))
+        preview = self.slot("preview", "tarot")
+        preview.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Ignored)
+        rl.addWidget(preview, 1)
+        rl.addWidget(self.slot("message", "tarot"))
+
+        options = QHBoxLayout()
+        options.setSpacing(6)
+        image = QPushButton("Image")
+        image.setToolTip("Attach images (or drop them anywhere on the window)")
+        image.clicked.connect(self.add_images)
+        save = QPushButton("Save Name")
+        save.setToolTip("Make the \"As\" name this character's default display name")
+        save.clicked.connect(self.save_default_name)
+        self.tarot_zoom = QPushButton("Zoom")
+        self.tarot_zoom.setCheckable(True)
+        self.tarot_zoom.setChecked(self.zoom_toggle.isChecked())
+        self.tarot_zoom.toggled.connect(self.zoom_toggle.setChecked)
+        self.zoom_toggle.toggled.connect(self.tarot_zoom.setChecked)
+        self.tarot_framing = QPushButton("Framing")
+        self.tarot_framing.setToolTip("Move or zoom this character's avatar and save it as the default")
+        self.tarot_framing.clicked.connect(self.edit_framing)
+        for b in (image, save, self.tarot_zoom, self.tarot_framing):
+            b.setObjectName("pill")
+            b.setProperty("compact", True)
+            b.setCursor(Qt.CursorShape.PointingHandCursor)
+            options.addWidget(b, 1)
+        rl.addLayout(options)
+        self.post_btn = QPushButton("POST")
+        self.post_btn.setObjectName("post")
+        self.post_btn.setFixedHeight(44)
+        self.post_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.post_btn.setToolTip("Post to Discord (or press Enter in the message box)")
+        self.post_btn.clicked.connect(self.send)
+        rl.addWidget(self.post_btn)
+        top.addWidget(reading)
+        top.addLayout(stage_col, 1)
+        right.addLayout(top, 1)
+
+        deck = QWidget()
+        deck.setObjectName("deck")
+        deck.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+        dl = QVBoxLayout(deck)
+        dl.setContentsMargins(18, 10, 18, 4)
+        self.deck_scroll = DeckScroll()
+        self.deck_scroll.setWidgetResizable(True)
+        self.deck_scroll.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.deck_scroll.setFixedHeight(DeckCard.H + DeckCard.LIFT + 2 + 16)
+        dl.addWidget(self.deck_scroll)
+        right.addWidget(deck)
+        root.addLayout(right, 1)
+        return tarot
+
+    def populate_deck(self):
+        content = QWidget()
+        row = QHBoxLayout(content)
+        row.setContentsMargins(0, 0, 0, 0)
+        row.setSpacing(10)
+        row.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+        self.deck_cards = {}
+        ordered = sorted(self.campaign_characters().items(),
+                         key=lambda kv: SORT_KEYS[self.sort_combo.currentText()](kv[1]))
+        for cid, c in ordered:
+            card = DeckCard(cid, c, self.pixmap(cid))
+            card.set_selected(cid == self.selected_cid)
+            card.clicked.connect(self.select_character)
+            card.menuRequested.connect(self.tile_menu)
+            card.stepRequested.connect(self.step_card)
+            row.addWidget(card)
+            self.deck_cards[cid] = card
+        self.deck_scroll.setWidget(content)
+
+    def deck_order(self):
+        return [cid for cid, card in self.deck_cards.items() if not card.isHidden()]
+
+    def step_card(self, delta):
+        order = self.deck_order()
+        if not order:
+            return
+        i = order.index(self.selected_cid) + delta if self.selected_cid in order else 0
+        cid = order[max(0, min(len(order) - 1, i))]
+        if cid != self.selected_cid:
+            self.select_character(cid)
+        card = self.deck_cards[cid]
+        self.deck_scroll.ensureWidgetVisible(card, 60, 0)
+        if self.focusWidget() in self.deck_cards.values():
+            card.setFocus()
+
+    def portrait(self, cid):
+        """The character's full portrait art (not the round avatar crop), sized for the tarot card."""
+        if cid not in self.portraits:
+            from PIL import Image
+            pix = QPixmap()
+            try:
+                with Image.open(ROOT / self.characters[cid]["source"]) as im:
+                    im = im.convert("RGBA")
+                    im.thumbnail((760, 1100), Image.LANCZOS)
+                    data = im.tobytes("raw", "RGBA")
+                    pix = QPixmap.fromImage(QImage(data, im.width, im.height, im.width * 4,
+                                                   QImage.Format.Format_RGBA8888).copy())
+            except OSError:
+                pix = self.pixmap(cid)
+            self.portraits[cid] = pix
+        return self.portraits[cid]
+
+    def update_stage(self):
+        if not hasattr(self, "stage"):
+            return
+        for cid, card in self.deck_cards.items():
+            card.set_selected(cid == self.selected_cid)
+        if self.view != "tarot":
+            return
+        cid = self.selected_cid
+        if not cid:
+            return self.stage.set_cards(None)
+        order = self.deck_order()
+        prev = nxt = None
+        if cid in order:
+            i = order.index(cid)
+            if i > 0:
+                prev = (self.characters[order[i - 1]], self.portrait(order[i - 1]))
+            if i < len(order) - 1:
+                nxt = (self.characters[order[i + 1]], self.portrait(order[i + 1]))
+        self.stage.set_cards((self.characters[cid], self.portrait(cid)), prev, nxt)
+
+    def _set_sending(self, on):
+        for button, text in ((self.send_btn, "SEAL && SEND"), (self.post_btn, "POST")):
+            button.setEnabled(not on)
+            button.setText("SENDING…" if on else text)
 
     # ---- roster -------------------------------------------------------
 
     def populate_nav(self):
         for b in self.nav_group.buttons():
             self.nav_group.removeButton(b)
+            self.nav_layout.removeWidget(b)  # right away, so drops never see the old entries
+            b.hide()
             b.deleteLater()
         entries = [(FAVORITES, f"Favorites  ({self.favorite_count()})", star_icon()),
                    (ALL, "All Factions", dot_icon(GOLD))]
-        for faction in sorted({c["faction"] for c in self.characters.values()}, key=faction_key):
-            entries.append((faction, faction, dot_icon(FACTION_COLORS.get(faction, GOLD))))
+        for faction in self.faction_order():
+            entries.append((faction, faction_label(faction), dot_icon(FACTION_COLORS.get(faction, GOLD))))
         if self.mode not in [e[0] for e in entries]:
             self.mode = ALL
         for mode, text, icon in entries:
-            b = QPushButton(icon, "  " + text)
-            b.setObjectName("navButton")
-            b.setCheckable(True)
+            is_faction = mode not in (ALL, FAVORITES)
+            b = NavButton(icon, "  " + text, mode, draggable=is_faction)
             b.setChecked(mode == self.mode)
-            b.setProperty("mode", mode)
-            b.setCursor(Qt.CursorShape.PointingHandCursor)
+            if is_faction:
+                b.setToolTip("Drag (or Ctrl+Up/Down) to reorder · right-click to rename")
+                b.customContextMenuRequested.connect(lambda _, btn=b: self.nav_menu(btn))
+                b.moveRequested.connect(self.step_faction)
             self.nav_group.addButton(b)
             self.nav_layout.addWidget(b)
         # Widen the rail so the longest faction name is never cut off.
-        rail = self.nav_layout.parentWidget()
+        rail = self.nav_list.parentWidget()
         rail.setMinimumWidth(max(200, max(b.sizeHint().width() for b in self.nav_group.buttons()) + 28))
+        # ...plus room for its scrollbar when a short window makes it scroll.
+        width = max(260, rail.minimumWidth() + 12)
+        self.nav_scroll.setMinimumWidth(width)
+        self.slots["nav"]["tarot"].setFixedWidth(width)
 
     def favorite_count(self):
-        return sum(1 for c in self.characters.values() if c.get("favorite"))
+        return sum(1 for c in self.campaign_characters().values() if c.get("favorite"))
 
     def update_favorites_label(self):
         for b in self.nav_group.buttons():
@@ -1519,12 +2426,13 @@ class MainWindow(QMainWindow):
         layout.setSpacing(28)
         self.tiles, self.sections = {}, []
         by_faction = self.sort_combo.currentText() == "Faction"
-        ordered = sorted(self.characters.items(), key=lambda kv: SORT_KEYS[self.sort_combo.currentText()](kv[1]))
+        ordered = sorted(self.campaign_characters().items(),
+                         key=lambda kv: SORT_KEYS[self.sort_combo.currentText()](kv[1]))
         section = None
         for cid, c in ordered:
             title = c["faction"] if by_faction else None
             if section is None or (by_faction and section.property("faction") != title):
-                section = RosterSection(title)
+                section = RosterSection(faction_label(title) if title else None)
                 section.setProperty("faction", title)
                 section.reordered.connect(self.save_order)
                 self.sections.append(section)
@@ -1533,6 +2441,7 @@ class MainWindow(QMainWindow):
             tile.set_selected(cid == self.selected_cid)
             tile.clicked.connect(self.select_character)
             tile.favoriteToggled.connect(self.toggle_favorite)
+            tile.menuRequested.connect(self.tile_menu)
             tile.draggable = by_faction
             if by_faction:
                 tile.setToolTip(tile.toolTip() + "\nDrag (or Ctrl+Left/Right) to reorder within the faction")
@@ -1541,13 +2450,16 @@ class MainWindow(QMainWindow):
             self.tiles[cid] = tile
         layout.addStretch()
         self.scroll.setWidget(content)
+        self.populate_deck()
         self.apply_filter()
 
     def save_order(self, cids):
         for i, cid in enumerate(cids):
             self.characters[cid]["order"] = i
         catalog.save_characters(self.characters)
-        self.statusBar().showMessage(f'Saved the order of {self.characters[cids[0]]["faction"]}', 3000)
+        self.populate_deck()
+        self.apply_filter()
+        self.statusBar().showMessage(f'Saved the order of {faction_label(self.characters[cids[0]]["faction"])}', 3000)
 
     def step_character(self, cid, delta):
         section = next(sec for sec in self.sections if any(t.cid == cid for t in sec.tiles))
@@ -1569,21 +2481,29 @@ class MainWindow(QMainWindow):
                 or (self.mode == FAVORITES and c.get("favorite"))
                 or c["faction"] == self.mode)
             tile.setVisible(bool(visible))
+            if cid in self.deck_cards:
+                self.deck_cards[cid].setVisible(bool(visible))
             shown += bool(visible)
         single_faction = self.mode not in (ALL, FAVORITES)
         for section in self.sections:
             section.setVisible(any(t.isVisibleTo(section) for t in section.tiles))
             section.header.setVisible(bool(section.property("faction")) and not single_faction)
 
-        self.title.setText({ALL: "The Roster", FAVORITES: "Favorites"}.get(self.mode, self.mode))
+        self.title.setText({ALL: self.campaign, FAVORITES: "Favorites"}.get(self.mode, faction_label(self.mode)))
         self.count.setText(f"{shown} soul" if shown == 1 else f"{shown} souls")
+        self.tarot_title.setText(self.title.text())
+        self.tarot_count.setText(self.count.text())
+        self.update_stage()
         if shown:
             self.empty.hide()
             self.scroll.show()
         else:
             self.scroll.hide()
             self.empty.show()
-            if self.mode == FAVORITES and not needle:
+            if not self.tiles:
+                self.empty.setText(f"No characters in {self.campaign} yet.\nAdd faction folders to "
+                                   f"Portraits/{self.campaign}/, then choose File → Rescan portraits.")
+            elif self.mode == FAVORITES and not needle:
                 self.empty.setText("No favorites yet.\nHover a portrait and click its star, or press F.")
             else:
                 self.empty.setText("No one answers to that name.")
@@ -1608,6 +2528,8 @@ class MainWindow(QMainWindow):
             c["favorite"] = True
         catalog.save_characters(self.characters)
         self.tiles[cid].set_favorite(bool(c.get("favorite")))
+        if cid in self.deck_cards:
+            self.deck_cards[cid].update()
         self.update_favorites_label()
         if self.mode == FAVORITES:
             self.apply_filter()
@@ -1620,11 +2542,7 @@ class MainWindow(QMainWindow):
         cid, name = self.selected_cid, self.name_edit.text().strip()
         if not cid or not name:
             return
-        self.characters[cid]["name"] = name
-        catalog.save_characters(self.characters)
-        self.tiles[cid].set_name(name)
-        self.profile.update()
-        self.statusBar().showMessage(f"Default name saved: {name}", 4000)
+        self.set_default_name(cid, name)
 
     def edit_framing(self):
         cid = self.selected_cid
@@ -1642,16 +2560,244 @@ class MainWindow(QMainWindow):
         catalog.save_characters(self.characters)
         if cid in self.tiles:
             self.tiles[cid].set_source(self.pixmap(cid))
+        if cid in self.deck_cards:
+            self.deck_cards[cid].set_avatar(self.pixmap(cid))
         self.refresh_preview()
         self.statusBar().showMessage(
             f"Framing saved for {c['name']}. Push avatars/ to GitHub so Discord shows it.", 8000)
 
+    # ---- renaming & faction order -----------------------------------------
+
+    def tile_menu(self, cid, pos):
+        c = self.characters[cid]
+        menu = QMenu(self)
+        menu.addAction("Rename…", lambda: self.rename_character(cid))
+        menu.addAction("Remove from Favorites" if c.get("favorite") else "Add to Favorites",
+                       lambda: self.toggle_favorite(cid))
+        menu.addAction("Edit Framing…", lambda: (self.select_character(cid), self.edit_framing()))
+        menu.exec(pos)
+
+    def rename_character(self, cid):
+        c = self.characters[cid]
+        name, ok = QInputDialog.getText(self, "Rename character",
+                                        f"Default display name for {c['name']}:", text=c["name"])
+        name = name.strip()
+        if not ok or not name or name == c["name"]:
+            return
+        problems = [p for p in discord_client.validate_message("x", name, []) if p]
+        if problems:
+            return QMessageBox.warning(self, "Rename character", "\n".join(problems))
+        self.set_default_name(cid, name)
+
+    def set_default_name(self, cid, name):
+        c = self.characters[cid]
+        old = c["name"]
+        c["name"] = name
+        catalog.save_characters(self.characters)
+        self.tiles[cid].set_name(name)
+        if cid in self.deck_cards:
+            self.deck_cards[cid].refresh_text()
+        if cid == self.selected_cid and self.name_edit.text().strip() in (old, ""):
+            self.name_edit.setText(name)
+        if self.sort_combo.currentText() == "Name":
+            self.populate_roster()
+        self.profile.update()
+        self.refresh_preview()
+        self.statusBar().showMessage(f"Default name saved: {name}", 4000)
+
+    def nav_menu(self, button):
+        faction = button.property("mode")
+        if faction in (ALL, FAVORITES):
+            return
+        order = self.faction_order()
+        i = order.index(faction)
+        menu = QMenu(self)
+        menu.addAction("Rename faction…", lambda: self.rename_faction(faction))
+        if faction in FACTION_NAMES:
+            menu.addAction(f'Reset name to "{faction}"', lambda: self.rename_faction(faction, faction))
+        menu.addSeparator()
+        up = menu.addAction("Move up", lambda: self.move_faction(faction, i - 1))
+        down = menu.addAction("Move down", lambda: self.move_faction(faction, i + 2))
+        up.setEnabled(i > 0)
+        down.setEnabled(i < len(order) - 1)
+        menu.addSeparator()
+        menu.addAction("Move to top", lambda: self.move_faction(faction, 0)).setEnabled(i > 0)
+        menu.addAction("Move to bottom", lambda: self.move_faction(faction, len(order))).setEnabled(i < len(order) - 1)
+        menu.exec(button.mapToGlobal(QPoint(24, button.height())))
+
+    def faction_order(self):
+        return sorted({c["faction"] for c in self.campaign_characters().values()}, key=faction_key)
+
+    def rename_faction(self, faction, name=None):
+        if name is None:
+            name, ok = QInputDialog.getText(self, "Rename faction",
+                                            f'Name shown for the "{faction}" folder:', text=faction_label(faction))
+            if not ok:
+                return
+        name = name.strip()
+        if not name or name == faction:
+            FACTION_NAMES.pop(faction, None)
+        else:
+            FACTION_NAMES[faction] = name
+        save_factions()
+        self.populate_nav()
+        self.populate_roster()
+        self.refresh_preview()
+
+    def step_faction(self, faction, delta):
+        i = self.faction_order().index(faction)
+        self.move_faction(faction, i + (2 if delta > 0 else -1))
+        for b in self.nav_group.buttons():
+            if b.property("mode") == faction:
+                b.setFocus()
+
+    def move_faction(self, faction, index):
+        """Move `faction` so it sits before the entry currently at `index` (len = the end)."""
+        order = self.faction_order()
+        old = order.index(faction)
+        index = max(0, min(index, len(order)))
+        if index > old:
+            index -= 1
+        order.remove(faction)
+        order.insert(index, faction)
+        if order == self.faction_order():
+            return
+        FACTION_ORDER[:] = order + [f for f in FACTION_ORDER if f not in order]
+        save_factions()
+        self.populate_nav()
+        self.populate_roster()
+        self.statusBar().showMessage(f"Moved {faction_label(faction)}", 3000)
+
+    # ---- campaigns ------------------------------------------------------
+
+    def campaign_list(self):
+        names = set(catalog.campaigns()) | {c.get("campaign", catalog.DEFAULT_CAMPAIGN) for c in self.characters.values()}
+        order = [n for n in FACTIONS_DATA.get("campaign_order", []) if n in names]
+        return order + sorted(names - set(order))
+
+    def campaign_characters(self):
+        return {cid: c for cid, c in self.characters.items()
+                if c.get("campaign", catalog.DEFAULT_CAMPAIGN) == self.campaign}
+
+    def campaign_menu(self):
+        menu = QMenu(self)
+        for name in self.campaign_list():
+            n = sum(1 for c in self.characters.values() if c.get("campaign") == name)
+            action = menu.addAction(f"{name}   ({n})", lambda _=False, nm=name: self.switch_campaign(nm))
+            action.setCheckable(True)
+            action.setChecked(name == self.campaign)
+        menu.addSeparator()
+        menu.addAction("New campaign…", self.new_campaign)
+        card = self.campaign_card
+        menu.exec(card.mapToGlobal(QPoint(0, card.height() + 2)))
+
+    def campaign_context_menu(self):
+        order = self.campaign_list()
+        i = order.index(self.campaign) if self.campaign in order else 0
+        menu = QMenu(self)
+        menu.addAction("Rename campaign…", self.rename_campaign)
+        menu.addAction("Open campaign folder", self.open_campaign_folder)
+        menu.addSeparator()
+        menu.addAction("Move up in list", lambda: self.move_campaign(-1)).setEnabled(i > 0)
+        menu.addAction("Move down in list", lambda: self.move_campaign(1)).setEnabled(i < len(order) - 1)
+        menu.addSeparator()
+        menu.addAction("New campaign…", self.new_campaign)
+        card = self.campaign_card
+        menu.exec(card.mapToGlobal(QPoint(0, card.height() + 2)))
+
+    def switch_campaign(self, name, force=False):
+        if name == self.campaign and not force:
+            return
+        if self.selected_cid:
+            self.selected_by_campaign[self.campaign] = self.selected_cid
+        self.campaign = name
+        load_factions(name)
+        self.mode = ALL
+        self.selected_cid = None
+        self.campaign_card.set_campaign(name)
+        self.populate_nav()
+        self.populate_roster()
+        cid = self.selected_by_campaign.get(name)
+        if cid in self.campaign_characters():
+            self.select_character(cid)
+        else:
+            self.name_edit.clear()
+            self.refresh_preview()
+
+    def _campaign_name(self, title, current=""):
+        while True:
+            name, ok = QInputDialog.getText(self, title, "Campaign name:", text=current)
+            name = name.strip()
+            if not ok or not name or name == current:
+                return None
+            if re.search(r'[<>:"/\\|?*]', name) or name.endswith("."):
+                QMessageBox.warning(self, title, 'A campaign name can\'t contain < > : " / \\ | ? * or end in a dot.')
+            elif name in self.campaign_list():
+                QMessageBox.warning(self, title, f'There\'s already a campaign called "{name}".')
+            else:
+                return name
+
+    def new_campaign(self):
+        name = self._campaign_name("New campaign")
+        if not name:
+            return
+        folder = catalog.PORTRAITS_DIR / name
+        folder.mkdir(parents=True, exist_ok=True)
+        FACTIONS_DATA["campaign_order"] = self.campaign_list()
+        self.switch_campaign(name)
+        save_factions()
+        answer = QMessageBox.question(
+            self, "New campaign",
+            f"Created {name}.\n\nAdd a folder for each faction inside Portraits/{name}/ with its portraits, "
+            "then choose File → Rescan portraits.\n\nOpen the folder now?")
+        if answer == QMessageBox.StandardButton.Yes:
+            self.open_campaign_folder()
+
+    def rename_campaign(self):
+        old = self.campaign
+        new = self._campaign_name("Rename campaign", old)
+        if not new:
+            return
+        try:
+            catalog.rename_campaign(self.characters, old, new)
+        except OSError as e:
+            return QMessageBox.warning(self, "Rename campaign",
+                                       f"Couldn't rename the folder (is a file in it open elsewhere?).\n{e}")
+        FACTIONS_DATA["campaigns"][new] = FACTIONS_DATA["campaigns"].pop(old, {})
+        FACTIONS_DATA["campaign_order"] = [new if n == old else n for n in FACTIONS_DATA.get("campaign_order", [])]
+        if old in self.selected_by_campaign:
+            self.selected_by_campaign[new] = self.selected_by_campaign.pop(old)
+        self.campaign = new
+        CURRENT_CAMPAIGN[0] = new
+        save_factions()
+        self.campaign_card.set_campaign(new)
+        self.apply_filter()
+        self.statusBar().showMessage(f"Renamed campaign to {new}", 4000)
+
+    def move_campaign(self, delta):
+        order = self.campaign_list()
+        i = order.index(self.campaign)
+        j = max(0, min(len(order) - 1, i + delta))
+        order[i], order[j] = order[j], order[i]
+        FACTIONS_DATA["campaign_order"] = order
+        save_factions()
+
+    def open_campaign_folder(self):
+        folder = catalog.PORTRAITS_DIR / self.campaign
+        folder.mkdir(parents=True, exist_ok=True)
+        os.startfile(folder)
+
     def resync(self, force):
         self.characters = run_sync(self, force)
         self.pixmaps.clear()
+        self.portraits.clear()
+        if self.campaign not in self.campaign_list():
+            self.campaign = next(iter(self.campaign_list()), catalog.DEFAULT_CAMPAIGN)
+            self.campaign_card.set_campaign(self.campaign)
+        load_factions(self.campaign)
         self.populate_nav()
         self.populate_roster()
-        if self.selected_cid not in self.characters:
+        if self.selected_cid not in self.campaign_characters():
             self.selected_cid = None
         self.refresh_preview()
         self.statusBar().showMessage(
@@ -1659,26 +2805,218 @@ class MainWindow(QMainWindow):
 
     # ---- channels -----------------------------------------------------
 
-    def populate_channels(self, select=None):
-        select = select if select in self.channels else next(iter(self.channels), "")
-        self.pills.set_channels(list(self.channels), select)
+    # ---- servers & channels ------------------------------------------
+
+    def _load_servers(self):
+        data = servers.load(CHANNELS_FILE)
+        if servers.is_legacy(data):
+            return self._migrate_channels(data)
+        return data.get("servers", {})
+
+    def _migrate_channels(self, flat):
+        """One-off: group the old flat channel list by Discord server (asks for each server's name)."""
+        def guild_of(url):
+            try:
+                return discord_client.fetch_webhook_info(url).get("guild_id")
+            except discord_client.WebhookError:
+                return None
+
+        def name_for(guild_id, channels, taken):
+            default = next(n for n in ("My Server", *(f"Server {i}" for i in range(2, 99))) if n not in taken)
+            name, ok = QInputDialog.getText(
+                None, "Name this server",
+                "Channels are now grouped by Discord server.\n"
+                f"What should the server with # {', # '.join(channels)} be called?", text=default)
+            name = name.strip() if ok else ""
+            return name if name and name not in taken else default
+
+        QApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
+        try:
+            grouped = servers.migrate(flat, guild_of, name_for)
+        finally:
+            QApplication.restoreOverrideCursor()
+        # The last-message history was keyed by channel name alone.
+        for name, server in grouped.items():
+            for channel in server["channels"]:
+                if channel in self.history:
+                    self.history[servers.history_key(name, channel)] = self.history.pop(channel)
+        save_json(HISTORY_FILE, self.history)
+        servers.save(CHANNELS_FILE, grouped)
+        if self.ui_state.value("channel"):
+            owner = next((n for n, sv in grouped.items() if self.ui_state.value("channel") in sv["channels"]), None)
+            if owner:
+                self.ui_state.setValue("server", owner)
+                self.last_channel[owner] = self.ui_state.value("channel")
+        return grouped
+
+    def save_servers(self):
+        servers.save(CHANNELS_FILE, self.servers)
+
+    def channel_url(self, server, channel):
+        return self.servers.get(server, {}).get("channels", {}).get(channel)
+
+    def populate_servers(self, select=None):
+        if select not in self.servers:
+            select = self.current_server if self.current_server in self.servers else next(iter(self.servers), "")
+        self.current_server = select
+        self.rail.set_servers(list(self.servers), select, {n: self.server_image(n) for n in self.servers})
+        self.server_label.setText(select.upper() if select else "NO SERVER YET")
+        self.populate_channels(self.last_channel.get(select))
+
+    def select_server(self, name):
+        if self.pills.current():
+            self.last_channel[self.current_server] = self.pills.current()
+        self.populate_servers(name)
+
+    def select_channel(self, channel):
+        self.last_channel[self.current_server] = channel
         self.refresh_preview()
 
-    def add_channel(self):
-        dlg = AddChannelDialog(self, self.channels.keys())
-        if dlg.exec():
-            name = dlg.name.text().strip()
-            self.channels[name] = dlg.url.text().strip()
-            save_json(CHANNELS_FILE, self.channels)
-            self.populate_channels(select=name)
-            self.statusBar().showMessage(f'Added channel "{name}" (webhook: {dlg.webhook_name})', 5000)
+    def populate_channels(self, select=None):
+        channels = self.servers.get(self.current_server, {}).get("channels", {})
+        select = select if select in channels else next(iter(channels), "")
+        if select:
+            self.last_channel[self.current_server] = select
+        self.pills.set_channels(list(channels), select)
+        self.refresh_preview()
+        self.fit_composer()
+
+    def fit_composer(self):
+        """Never squeeze the composer (the channel row's flow layout hides its true height from Qt);
+        the preview above scrolls instead."""
+        lay = self.composer.layout()
+        lay.activate()
+        width = self.composer.width() if self.composer.width() > 100 else 510
+        need = lay.totalHeightForWidth(width) if lay.hasHeightForWidth() else lay.totalMinimumSize().height()
+        self.composer.setMinimumHeight(max(need, lay.totalMinimumSize().height()))
+
+    def resizeEvent(self, e):
+        super().resizeEvent(e)
+        if hasattr(self, "composer"):
+            self.fit_composer()
+
+    def server_for_guild(self, guild_id):
+        if not guild_id:
+            return None
+        return next((n for n, sv in self.servers.items() if sv.get("guild_id") == guild_id), None)
+
+    def ask_server_name(self, title, prompt, current=""):
+        while True:
+            name, ok = QInputDialog.getText(self, title, prompt, text=current)
+            name = name.strip()
+            if not ok or not name:
+                return None
+            if name == current or name not in self.servers:
+                return name
+            QMessageBox.warning(self, title, f'There\'s already a server called "{name}".')
+
+    def add_channel(self, new_server=False):
+        dlg = AddChannelDialog(self, new_server)
+        if not dlg.exec():
+            return
+        name, url = dlg.name.text().strip(), dlg.url.text().strip()
+        guild_id = dlg.info.get("guild_id")
+        server = self.server_for_guild(guild_id)
+        if server is None and not new_server and self.current_server \
+                and not self.servers[self.current_server].get("guild_id"):
+            server = self.current_server  # server added before Discord ids were tracked
+            self.servers[server]["guild_id"] = guild_id
+        if server is None:
+            server = self.ask_server_name("New server", "This webhook posts to a server you haven't added yet.\n"
+                                                        "What should the server be called?")
+            if not server:
+                return
+            self.servers[server] = {"guild_id": guild_id, "channels": {}}
+        channels = self.servers[server]["channels"]
+        if name in channels:
+            return QMessageBox.warning(self, "Add channel", f'"{server}" already has a channel called "# {name}".')
+        channels[name] = url
+        self.save_servers()
+        moved = server != self.current_server and self.current_server and not new_server
+        self.last_channel[server] = name
+        self.populate_servers(server)
+        self.statusBar().showMessage(
+            f'Added # {name} to {server}' + (" (that's the server this webhook posts to)" if moved else ""), 8000)
 
     def remove_channel(self, name):
-        if QMessageBox.question(self, "Remove channel", f'Remove "# {name}" from the channel list?') \
+        server = self.current_server
+        if QMessageBox.question(self, "Remove channel", f'Remove "# {name}" from {server}?') \
                 == QMessageBox.StandardButton.Yes:
-            del self.channels[name]
-            save_json(CHANNELS_FILE, self.channels)
+            del self.servers[server]["channels"][name]
+            self.history.pop(servers.history_key(server, name), None)
+            save_json(HISTORY_FILE, self.history)
+            self.save_servers()
             self.populate_channels(self.pills.current())
+
+    def rename_server(self, old):
+        new = self.ask_server_name("Rename server", "Server name:", old)
+        if not new or new == old:
+            return
+        self.servers = {(new if k == old else k): v for k, v in self.servers.items()}
+        prefix = servers.history_key(old, "")
+        self.history = {(servers.history_key(new, k[len(prefix):]) if k.startswith(prefix) else k): v
+                        for k, v in self.history.items()}
+        if old in self.last_channel:
+            self.last_channel[new] = self.last_channel.pop(old)
+        save_json(HISTORY_FILE, self.history)
+        self.save_servers()
+        self.populate_servers(new if self.current_server == old else self.current_server)
+
+    def server_image(self, name):
+        path = self.servers[name].get("icon")
+        return QPixmap(str(ROOT / path)) if path and (ROOT / path).exists() else None
+
+    def set_server_image(self, name):
+        path, _ = QFileDialog.getOpenFileName(self, f"Image for {name}", "", IMAGE_FILTER)
+        if not path:
+            return
+        from PIL import Image
+        try:
+            with Image.open(path) as im:
+                im = im.convert("RGBA")
+                side = min(im.size)
+                left, top = (im.width - side) // 2, (im.height - side) // 2
+                im = im.crop((left, top, left + side, top + side)).resize((128, 128), Image.LANCZOS)
+        except OSError as e:
+            return QMessageBox.warning(self, "Server image", f"Couldn't open that image.\n{e}")
+        self._delete_server_image(name)
+        dest = SERVER_ICONS_DIR / f"{catalog.slugify(name) or 'server'}.png"
+        n = 2
+        while dest.exists():
+            dest = SERVER_ICONS_DIR / f"{catalog.slugify(name) or 'server'}-{n}.png"
+            n += 1
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        im.save(dest, "PNG")
+        self.servers[name]["icon"] = dest.relative_to(ROOT).as_posix()
+        self.save_servers()
+        self.populate_servers(self.current_server)
+        self.statusBar().showMessage(f"Image set for {name}", 4000)
+
+    def clear_server_image(self, name):
+        self._delete_server_image(name)
+        self.servers[name].pop("icon", None)
+        self.save_servers()
+        self.populate_servers(self.current_server)
+
+    def _delete_server_image(self, name):
+        path = self.servers[name].get("icon")
+        if path and (ROOT / path).is_file() and (ROOT / path).parent == SERVER_ICONS_DIR:
+            (ROOT / path).unlink()
+
+    def remove_server(self, name):
+        n = len(self.servers[name]["channels"])
+        if QMessageBox.question(self, "Remove server",
+                                f'Remove "{name}" and its {n} channel{"s" if n != 1 else ""}?') \
+                != QMessageBox.StandardButton.Yes:
+            return
+        self._delete_server_image(name)
+        del self.servers[name]
+        prefix = servers.history_key(name, "")
+        self.history = {k: v for k, v in self.history.items() if not k.startswith(prefix)}
+        self.last_channel.pop(name, None)
+        save_json(HISTORY_FILE, self.history)
+        self.save_servers()
+        self.populate_servers()
 
     # ---- settings -----------------------------------------------------
 
@@ -1692,10 +3030,10 @@ class MainWindow(QMainWindow):
     # ---- compose & preview --------------------------------------------
 
     def refresh_preview(self):
-        channel = self.pills.current()
-        self.preview_channel.setText(f"# {channel}" if channel else "— add a channel —")
+        server, channel = self.current_server, self.pills.current()
+        self.preview_channel.setText(f"{server}  ·  # {channel}" if channel else "— add a channel —")
 
-        last = self.history.get(channel)
+        last = self.history.get(servers.history_key(server, channel))
         if last and last.get("cid") in self.characters:
             sent = datetime.fromisoformat(last["time"])
             when = sent.strftime("%I:%M %p").lstrip("0")
@@ -1708,21 +3046,26 @@ class MainWindow(QMainWindow):
             self.context_row.show()
         else:
             self.context_row.hide()
-        self.context_hint.setVisible(self.context_row.isVisibleTo(self.context_row.parentWidget()))
 
         cid = self.selected_cid
         zoomed = self.use_zoom(cid)
         has_zoom = bool(cid) and bool(self.characters[cid].get("zoom"))
         self.zoom_toggle.setEnabled(has_zoom)
         self.framing_btn.setEnabled(bool(cid))
+        self.tarot_zoom.setEnabled(has_zoom)
+        self.tarot_framing.setEnabled(bool(cid))
+        self.tarot_zoom.setToolTip("Post with a close-up of the face" if has_zoom
+                                   else "This character has no zoomed avatar")
+        self.tarot_where.setText(self.preview_channel.text())
         self.zoom_toggle.setToolTip("Post with a close-up of the face" if has_zoom
                                     else "This character has no zoomed avatar")
         self.profile.set_character(self.characters.get(cid), self.pixmap(cid, zoomed) if cid else QPixmap())
+        self.update_stage()
         self.message_row.setVisible(bool(cid))
         self.placeholder.setVisible(not cid)
         if cid:
             self.message_row.set_message(self.pixmap(cid, zoomed), self.name_edit.text().strip(),
-                                         f'{self.characters[cid]["faction"]} · unsent',
+                                         f'{faction_label(self.characters[cid]["faction"])} · unsent',
                                          self.message.toPlainText(), self.attachments, removable=True)
         n = len(self.message.toPlainText())
         self.counter.setText(f"{n} / {discord_client.MAX_CONTENT}")
@@ -1761,7 +3104,7 @@ class MainWindow(QMainWindow):
     def send(self):
         if self.worker and self.worker.isRunning():
             return
-        cid, channel = self.selected_cid, self.pills.current()
+        cid, server, channel = self.selected_cid, self.current_server, self.pills.current()
         if not cid:
             return QMessageBox.warning(self, "Send", "Pick a character first.")
         if not channel:
@@ -1784,23 +3127,22 @@ class MainWindow(QMainWindow):
                 return
             self.warned_no_avatar = True
 
-        self.send_btn.setEnabled(False)
-        self.send_btn.setText("SENDING…")
-        self.worker = SendWorker(self.channels[channel], content, username, avatar, files)
-        self.worker.done.connect(lambda ok, err: self.on_sent(ok, err, cid, username, channel, content, files, zoomed))
+        self._set_sending(True)
+        self.worker = SendWorker(self.channel_url(server, channel), content, username, avatar, files)
+        self.worker.done.connect(
+            lambda ok, err: self.on_sent(ok, err, cid, username, server, channel, content, files, zoomed))
         self.worker.start()
 
-    def on_sent(self, ok, err, cid, username, channel, content, files, zoomed=False):
-        self.send_btn.setEnabled(True)
-        self.send_btn.setText("SEAL && SEND")
+    def on_sent(self, ok, err, cid, username, server, channel, content, files, zoomed=False):
+        self._set_sending(False)
         if not ok:
             return QMessageBox.critical(self, "Send failed", err)
-        self.history[channel] = {"cid": cid, "name": username, "content": content, "images": len(files),
+        self.history[servers.history_key(server, channel)] = {"cid": cid, "name": username, "content": content, "images": len(files),
                                  "zoom": zoomed, "time": datetime.now().isoformat(timespec="seconds")}
         save_json(HISTORY_FILE, self.history)
         self.attachments.clear()
         self.message.clear()  # also refreshes the preview
-        self.statusBar().showMessage(f"Sent as {username} to # {channel}", 6000)
+        self.statusBar().showMessage(f"Sent as {username} to {server} · # {channel}", 6000)
 
     # ---- persistence --------------------------------------------------
 
@@ -1811,15 +3153,23 @@ class MainWindow(QMainWindow):
         splitter = self.ui_state.value("splitter")
         if splitter:
             self.splitter.restoreState(splitter)
-        self.select_character(self.ui_state.value("character"))
+        cid = self.selected_by_campaign.get(self.campaign) or self.ui_state.value("character")
+        if cid in self.campaign_characters():
+            self.select_character(cid)
 
     def closeEvent(self, e):
         self.ui_state.setValue("geometry", self.saveGeometry())
         self.ui_state.setValue("splitter", self.splitter.saveState())
-        self.ui_state.setValue("channel", self.pills.current())
+        self.ui_state.setValue("server", self.current_server)
+        self.ui_state.setValue("last_channels", json.dumps(self.last_channel))
         self.ui_state.setValue("character", self.selected_cid)
+        if self.selected_cid:
+            self.selected_by_campaign[self.campaign] = self.selected_cid
+        self.ui_state.setValue("campaign", self.campaign)
+        self.ui_state.setValue("character_by_campaign", json.dumps(self.selected_by_campaign))
         self.ui_state.setValue("sort", self.sort_combo.currentText())
         self.ui_state.setValue("zoom", self.zoom_toggle.isChecked())
+        self.ui_state.setValue("view", self.view)
         super().closeEvent(e)
 
 
