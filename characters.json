@@ -1,4 +1,59 @@
 {
+  "bridal-party-of-the-pale-raven/anatolia": {
+    "name": "Anatolia",
+    "faction": "Bridal Party of the Pale Raven",
+    "source": "Portraits/Bridal Party of the Pale Raven/FEFW_Nintendo_Today_Anatolia_profile.webp",
+    "avatar": "bridal-party-of-the-pale-raven/anatolia.png",
+    "crop": [
+      0.18,
+      0.0,
+      0.5
+    ]
+  },
+  "bridal-party-of-the-pale-raven/dadao": {
+    "name": "Dadao",
+    "faction": "Bridal Party of the Pale Raven",
+    "source": "Portraits/Bridal Party of the Pale Raven/FEFW_Nintendo_Today_Dadao_profile.webp",
+    "avatar": "bridal-party-of-the-pale-raven/dadao.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "bridal-party-of-the-pale-raven/halvin": {
+    "name": "Halvin",
+    "faction": "Bridal Party of the Pale Raven",
+    "source": "Portraits/Bridal Party of the Pale Raven/FEFW_Nintendo_Today_Halvin_profile.webp",
+    "avatar": "bridal-party-of-the-pale-raven/halvin.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "bridal-party-of-the-pale-raven/nezha": {
+    "name": "Nezha",
+    "faction": "Bridal Party of the Pale Raven",
+    "source": "Portraits/Bridal Party of the Pale Raven/FEFW_Nintendo_Today_Nezha_profile.webp",
+    "avatar": "bridal-party-of-the-pale-raven/nezha.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "bridal-party-of-the-pale-raven/sha-lan": {
+    "name": "Sha Lan",
+    "faction": "Bridal Party of the Pale Raven",
+    "source": "Portraits/Bridal Party of the Pale Raven/FEFW_Nintendo_Today_Sha_Lan_profile.webp",
+    "avatar": "bridal-party-of-the-pale-raven/sha-lan.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
   "fiery-mane/bertrand": {
     "name": "Bertrand",
     "faction": "Fiery Mane",
@@ -8,7 +63,8 @@
       0.22,
       0.0,
       0.5
-    ]
+    ],
+    "order": 0
   },
   "fiery-mane/dante": {
     "name": "Dante",
@@ -19,7 +75,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 2
   },
   "fiery-mane/gaitz": {
     "name": "Gaitz",
@@ -30,7 +87,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 1
   },
   "fiery-mane/goliath": {
     "name": "Goliath",
@@ -41,7 +99,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 3
   },
   "fiery-mane/jester": {
     "name": "Jester",
@@ -52,7 +111,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 4
   },
   "gods-of-dagda/aurora": {
     "name": "Aurora",
@@ -162,7 +222,8 @@
       0.2,
       0.013,
       0.5
-    ]
+    ],
+    "order": 0
   },
   "house-lamine/esmeralda": {
     "name": "Esmeralda",
@@ -173,7 +234,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 2
   },
   "house-lamine/fabio": {
     "name": "Fabio",
@@ -184,7 +246,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 1
   },
   "house-lamine/mikaela": {
     "name": "Mikaela",
@@ -195,7 +258,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 3
   },
   "kingdom-of-arago/aswan": {
     "name": "Aswan",
@@ -239,7 +303,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 1
   },
   "linarias-dewdrops/loretta": {
     "name": "Loretta",
@@ -250,7 +315,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 2
   },
   "linarias-dewdrops/ninae": {
     "name": "Ninae",
@@ -261,7 +327,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 3
   },
   "linarias-dewdrops/orchel": {
     "name": "Orchel",
@@ -272,7 +339,8 @@
       0.13,
       0.046,
       0.5
-    ]
+    ],
+    "order": 0
   },
   "linarias-dewdrops/seteth": {
     "name": "Seteth",
@@ -283,7 +351,8 @@
       0.27,
       0.0,
       0.5
-    ]
+    ],
+    "order": 4
   },
   "megairas-beacon/bonaventure": {
     "name": "Bonaventure",
@@ -294,7 +363,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 1
   },
   "megairas-beacon/lilian": {
     "name": "Lilian",
@@ -305,7 +375,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 3
   },
   "megairas-beacon/lysander": {
     "name": "Lysander",
@@ -316,7 +387,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 4
   },
   "megairas-beacon/theodora": {
     "name": "Theodora",
@@ -327,7 +399,8 @@
       0.18,
       0.033,
       0.5
-    ]
+    ],
+    "order": 0
   },
   "megairas-beacon/tobias": {
     "name": "Tobias",
@@ -338,7 +411,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 2
   },
   "ribeira-winds/cai": {
     "name": "Cai",
@@ -349,7 +423,8 @@
       0.1,
       0.0,
       0.5
-    ]
+    ],
+    "order": 0
   },
   "ribeira-winds/peter": {
     "name": "Peter",
@@ -360,7 +435,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 2
   },
   "ribeira-winds/tialla": {
     "name": "Tialla",
@@ -371,7 +447,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 1
   },
   "ribeira-winds/ultand": {
     "name": "Ultand",
@@ -382,7 +459,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 3
   },
   "rose-tempest/buccar": {
     "name": "Buccar",
@@ -393,7 +471,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 1
   },
   "rose-tempest/leda": {
     "name": "Leda",
@@ -404,7 +483,8 @@
       0.2,
       0.013,
       0.5
-    ]
+    ],
+    "order": 0
   },
   "rose-tempest/mu": {
     "name": "Mu",
@@ -415,7 +495,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 3
   },
   "rose-tempest/olympia": {
     "name": "Olympia",
@@ -426,7 +507,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 4
   },
   "rose-tempest/sirocco": {
     "name": "Sirocco",
@@ -437,7 +519,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 2
   },
   "tale-of-the-moon/fianna": {
     "name": "Fianna",
@@ -448,7 +531,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 2
   },
   "tale-of-the-moon/ludia": {
     "name": "Ludia",
@@ -459,7 +543,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 3
   },
   "tale-of-the-moon/simon": {
     "name": "Simon",
@@ -470,7 +555,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 4
   },
   "tale-of-the-moon/talimun": {
     "name": "Talimun",
@@ -481,7 +567,8 @@
       0.27,
       0.0,
       0.5
-    ]
+    ],
+    "order": 0
   },
   "tale-of-the-moon/ursula": {
     "name": "Ursula",
@@ -492,7 +579,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 1
   },
   "temple-army/anna": {
     "name": "Anna",
@@ -503,7 +591,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 1
   },
   "temple-army/centurio": {
     "name": "Centurio",
@@ -514,7 +603,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 0
   },
   "temple-army/sofia": {
     "name": "Sofia",
@@ -525,7 +615,8 @@
       0.0,
       0.0,
       1.0
-    ]
+    ],
+    "order": 2
   },
   "unaffiliated/alexandra": {
     "name": "Alexandra",

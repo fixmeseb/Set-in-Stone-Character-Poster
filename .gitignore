@@ -1,6 +1,9 @@
 # Webhook URLs are secrets — anyone with one can post to that channel.
 channel_list.json
 
+# Last message sent per channel, shown as context in the preview.
+history.json
+
 # Full-size source art; only avatars/ needs to be public for avatar_url.
 Portraits/
 
