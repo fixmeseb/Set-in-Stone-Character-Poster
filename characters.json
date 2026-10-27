@@ -169,6 +169,138 @@
       0.533
     ]
   },
+  "friends/aka-r": {
+    "name": "aka_r",
+    "faction": "Friends",
+    "source": "Portraits/Friends/aka_r.webp",
+    "avatar": "friends/aka-r.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "friends/drop-of-jello": {
+    "name": "Drop of Jello",
+    "faction": "Friends",
+    "source": "Portraits/Friends/Drop_of_Jello.webp",
+    "avatar": "friends/drop-of-jello.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "friends/duodragon": {
+    "name": "duodragon",
+    "faction": "Friends",
+    "source": "Portraits/Friends/duodragon.webp",
+    "avatar": "friends/duodragon.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "friends/farosh": {
+    "name": "Farosh",
+    "faction": "Friends",
+    "source": "Portraits/Friends/Farosh.webp",
+    "avatar": "friends/farosh.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "friends/grimlock": {
+    "name": "Grimlock",
+    "faction": "Friends",
+    "source": "Portraits/Friends/Grimlock.webp",
+    "avatar": "friends/grimlock.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "friends/haymaker": {
+    "name": "haymaker",
+    "faction": "Friends",
+    "source": "Portraits/Friends/haymaker.webp",
+    "avatar": "friends/haymaker.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "friends/minerharry": {
+    "name": "minerharry",
+    "faction": "Friends",
+    "source": "Portraits/Friends/minerharry.webp",
+    "avatar": "friends/minerharry.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "friends/neii-neii": {
+    "name": "NeiiNeii",
+    "faction": "Friends",
+    "source": "Portraits/Friends/NeiiNeii.webp",
+    "avatar": "friends/neii-neii.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "friends/starfall": {
+    "name": "Starfall",
+    "faction": "Friends",
+    "source": "Portraits/Friends/Starfall.webp",
+    "avatar": "friends/starfall.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "friends/sugar-cookie": {
+    "name": "SugarCookie",
+    "faction": "Friends",
+    "source": "Portraits/Friends/SugarCookie.webp",
+    "avatar": "friends/sugar-cookie.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "friends/that-nguy": {
+    "name": "thatNguy",
+    "faction": "Friends",
+    "source": "Portraits/Friends/thatNguy.webp",
+    "avatar": "friends/that-nguy.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "friends/will-s": {
+    "name": "WillS",
+    "faction": "Friends",
+    "source": "Portraits/Friends/WillS.webp",
+    "avatar": "friends/will-s.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
   "gods-of-dagda/aurora": {
     "name": "Aurora",
     "faction": "Gods of Dagda",
@@ -322,7 +454,7 @@
     ]
   },
   "gods-of-dagda/sothis": {
-    "name": "Sothis",
+    "name": "The Beginning",
     "faction": "Gods of Dagda",
     "source": "Portraits/Gods of Dagda/mom1tmbfh3sf1.jpeg",
     "avatar": "gods-of-dagda/sothis.png",
