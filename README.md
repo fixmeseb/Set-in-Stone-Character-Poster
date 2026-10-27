@@ -11,7 +11,7 @@ python app.py
 
 ## Files
 
-| File | Purpose | In git? |
+| File | Purpose
 |---|---|---|
 | `Portraits/<Faction>/*` | Original art. Folder name = faction. | No (only avatars are needed) |
 | `avatars/` | 512×512 PNG avatars generated from Portraits. Must be public for Discord. | **Yes** |
@@ -43,9 +43,3 @@ Push `avatars/` to GitHub afterwards so the new avatar is reachable.
 Each character in `characters.json` has `"crop": [left, top, size]`:
 `left` and `size` are fractions of the image width, `top` is a fraction of its height.
 Edit it, then **File → Rebuild all avatars** (or `python catalog.py --force`).
-
-## Avatar hosting (GitHub)
-
-1. Create a **public** GitHub repo and push this folder (the `.gitignore` keeps webhooks and original art out).
-2. In the app, **File → Settings**, set the avatar base URL to
-   `https://raw.githubusercontent.com/<user>/<repo>/main/avatars/` and press **Test**.
