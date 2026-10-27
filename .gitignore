@@ -1,0 +1,12 @@
+# Webhook URLs are secrets — anyone with one can post to that channel.
+channel_list.json
+
+# Full-size source art; only avatars/ needs to be public for avatar_url.
+Portraits/
+
+__pycache__/
+*.pyc
+.venv/
+build/
+dist/
+*.spec

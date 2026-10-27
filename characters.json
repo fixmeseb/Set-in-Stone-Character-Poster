@@ -1,0 +1,706 @@
+{
+  "fiery-mane/bertrand": {
+    "name": "Bertrand",
+    "faction": "Fiery Mane",
+    "source": "Portraits/Fiery Mane/FEFW_Nintendo_Today_Bertrand_profile.webp",
+    "avatar": "fiery-mane/bertrand.png",
+    "crop": [
+      0.22,
+      0.0,
+      0.5
+    ]
+  },
+  "fiery-mane/dante": {
+    "name": "Dante",
+    "faction": "Fiery Mane",
+    "source": "Portraits/Fiery Mane/FEFW_Nintendo_Today_Dante_profile.webp",
+    "avatar": "fiery-mane/dante.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "fiery-mane/gaitz": {
+    "name": "Gaitz",
+    "faction": "Fiery Mane",
+    "source": "Portraits/Fiery Mane/FEFW_Nintendo_Today_Gaitz_profile.webp",
+    "avatar": "fiery-mane/gaitz.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "fiery-mane/goliath": {
+    "name": "Goliath",
+    "faction": "Fiery Mane",
+    "source": "Portraits/Fiery Mane/FEFW_Nintendo_Today_Goliath_profile.webp",
+    "avatar": "fiery-mane/goliath.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "fiery-mane/jester": {
+    "name": "Jester",
+    "faction": "Fiery Mane",
+    "source": "Portraits/Fiery Mane/FEFW_Nintendo_Today_Jester_profile.webp",
+    "avatar": "fiery-mane/jester.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "gods-of-dagda/aurora": {
+    "name": "Aurora",
+    "faction": "Gods of Dagda",
+    "source": "Portraits/Gods of Dagda/Aurora.webp",
+    "avatar": "gods-of-dagda/aurora.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "gods-of-dagda/credna": {
+    "name": "Credna",
+    "faction": "Gods of Dagda",
+    "source": "Portraits/Gods of Dagda/Credna.webp",
+    "avatar": "gods-of-dagda/credna.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "gods-of-dagda/fortuna": {
+    "name": "Fortuna",
+    "faction": "Gods of Dagda",
+    "source": "Portraits/Gods of Dagda/Fortuna.webp",
+    "avatar": "gods-of-dagda/fortuna.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "gods-of-dagda/jurah": {
+    "name": "Jurah",
+    "faction": "Gods of Dagda",
+    "source": "Portraits/Gods of Dagda/Jurah.webp",
+    "avatar": "gods-of-dagda/jurah.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "gods-of-dagda/kalla": {
+    "name": "Kalla",
+    "faction": "Gods of Dagda",
+    "source": "Portraits/Gods of Dagda/FEFW_Nintendo_Today_Kalla_profile.webp",
+    "avatar": "gods-of-dagda/kalla.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "gods-of-dagda/mars": {
+    "name": "Mars",
+    "faction": "Gods of Dagda",
+    "source": "Portraits/Gods of Dagda/Mars.webp",
+    "avatar": "gods-of-dagda/mars.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "gods-of-dagda/smyrnos": {
+    "name": "Smyrnos",
+    "faction": "Gods of Dagda",
+    "source": "Portraits/Gods of Dagda/Smyrnos.webp",
+    "avatar": "gods-of-dagda/smyrnos.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "gods-of-dagda/solel": {
+    "name": "Solel",
+    "faction": "Gods of Dagda",
+    "source": "Portraits/Gods of Dagda/Solel Portrait.webp",
+    "avatar": "gods-of-dagda/solel.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "gods-of-dagda/yu-phas": {
+    "name": "Yu Phas",
+    "faction": "Gods of Dagda",
+    "source": "Portraits/Gods of Dagda/Yu Phas.webp",
+    "avatar": "gods-of-dagda/yu-phas.png",
+    "crop": [
+      0.2188,
+      0.0,
+      0.5625
+    ]
+  },
+  "house-lamine/dietrich": {
+    "name": "Dietrich",
+    "faction": "House Lamine",
+    "source": "Portraits/House Lamine/FEFW_Nintendo_Today_Dietrich_profile.webp",
+    "avatar": "house-lamine/dietrich.png",
+    "crop": [
+      0.2,
+      0.013,
+      0.5
+    ]
+  },
+  "house-lamine/esmeralda": {
+    "name": "Esmeralda",
+    "faction": "House Lamine",
+    "source": "Portraits/House Lamine/FEFW_Nintendo_Today_Esmeralda_profile.webp.png",
+    "avatar": "house-lamine/esmeralda.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "house-lamine/fabio": {
+    "name": "Fabio",
+    "faction": "House Lamine",
+    "source": "Portraits/House Lamine/FEFW_Nintendo_Today_Fabio_profile.webp",
+    "avatar": "house-lamine/fabio.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "house-lamine/mikaela": {
+    "name": "Mikaela",
+    "faction": "House Lamine",
+    "source": "Portraits/House Lamine/FEFW_Nintendo_Today_Mikaela_profile.webp.png",
+    "avatar": "house-lamine/mikaela.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "kingdom-of-arago/aswan": {
+    "name": "Aswan",
+    "faction": "Kingdom of Arago",
+    "source": "Portraits/Kingdom of Arago/AswanFE18Portrait.webp",
+    "avatar": "kingdom-of-arago/aswan.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "kingdom-of-arago/creek": {
+    "name": "Creek",
+    "faction": "Kingdom of Arago",
+    "source": "Portraits/Kingdom of Arago/FEFW_Nintendo_Today_Creek_profile.webp",
+    "avatar": "kingdom-of-arago/creek.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "kingdom-of-arago/nathan": {
+    "name": "Nathan",
+    "faction": "Kingdom of Arago",
+    "source": "Portraits/Kingdom of Arago/FEFW_Nintendo_Today_Nathan_profile.webp",
+    "avatar": "kingdom-of-arago/nathan.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "linarias-dewdrops/diego": {
+    "name": "Diego",
+    "faction": "Linaria's Dewdrops",
+    "source": "Portraits/Linaria's Dewdrops/FEFW_Nintendo_Today_Diego_profile.webp",
+    "avatar": "linarias-dewdrops/diego.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "linarias-dewdrops/loretta": {
+    "name": "Loretta",
+    "faction": "Linaria's Dewdrops",
+    "source": "Portraits/Linaria's Dewdrops/FEFW_Nintendo_Today_Loretta_profile.webp",
+    "avatar": "linarias-dewdrops/loretta.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "linarias-dewdrops/ninae": {
+    "name": "Ninae",
+    "faction": "Linaria's Dewdrops",
+    "source": "Portraits/Linaria's Dewdrops/FEFW_Nintendo_Today_Ninae_profile.webp",
+    "avatar": "linarias-dewdrops/ninae.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "linarias-dewdrops/orchel": {
+    "name": "Orchel",
+    "faction": "Linaria's Dewdrops",
+    "source": "Portraits/Linaria's Dewdrops/FEFW_Nintendo_Today_Orchel_profile.webp",
+    "avatar": "linarias-dewdrops/orchel.png",
+    "crop": [
+      0.13,
+      0.046,
+      0.5
+    ]
+  },
+  "linarias-dewdrops/seteth": {
+    "name": "Seteth",
+    "faction": "Linaria's Dewdrops",
+    "source": "Portraits/Linaria's Dewdrops/FEFW_Nintendo_Today_Seteth_profile.webp",
+    "avatar": "linarias-dewdrops/seteth.png",
+    "crop": [
+      0.27,
+      0.0,
+      0.5
+    ]
+  },
+  "megairas-beacon/bonaventure": {
+    "name": "Bonaventure",
+    "faction": "Megaira's Beacon",
+    "source": "Portraits/Megaira's Beacon/FEFW_Nintendo_Today_Bonaventure_profile.webp.png",
+    "avatar": "megairas-beacon/bonaventure.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "megairas-beacon/lilian": {
+    "name": "Lilian",
+    "faction": "Megaira's Beacon",
+    "source": "Portraits/Megaira's Beacon/FEFW_Nintendo_Today_Lilian_profile.webp.png",
+    "avatar": "megairas-beacon/lilian.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "megairas-beacon/lysander": {
+    "name": "Lysander",
+    "faction": "Megaira's Beacon",
+    "source": "Portraits/Megaira's Beacon/FEFW_Nintendo_Today_Lysander_profile.webp",
+    "avatar": "megairas-beacon/lysander.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "megairas-beacon/theodora": {
+    "name": "Theodora",
+    "faction": "Megaira's Beacon",
+    "source": "Portraits/Megaira's Beacon/FEFW_Nintendo_Today_Theodora_profile.webp.png",
+    "avatar": "megairas-beacon/theodora.png",
+    "crop": [
+      0.18,
+      0.033,
+      0.5
+    ]
+  },
+  "megairas-beacon/tobias": {
+    "name": "Tobias",
+    "faction": "Megaira's Beacon",
+    "source": "Portraits/Megaira's Beacon/FEFW_Nintendo_Today_Tobias_profile.webp",
+    "avatar": "megairas-beacon/tobias.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "ribeira-winds/cai": {
+    "name": "Cai",
+    "faction": "Ribeira Winds",
+    "source": "Portraits/Ribeira Winds/FEFW_Nintendo_Today_Cai_profile.webp.png",
+    "avatar": "ribeira-winds/cai.png",
+    "crop": [
+      0.1,
+      0.0,
+      0.5
+    ]
+  },
+  "ribeira-winds/peter": {
+    "name": "Peter",
+    "faction": "Ribeira Winds",
+    "source": "Portraits/Ribeira Winds/FEFW_Nintendo_Today_Peter_profile.webp.png",
+    "avatar": "ribeira-winds/peter.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "ribeira-winds/tialla": {
+    "name": "Tialla",
+    "faction": "Ribeira Winds",
+    "source": "Portraits/Ribeira Winds/Tialla.png",
+    "avatar": "ribeira-winds/tialla.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "ribeira-winds/ultand": {
+    "name": "Ultand",
+    "faction": "Ribeira Winds",
+    "source": "Portraits/Ribeira Winds/FEFW_Nintendo_Today_Ultand_profile.webp.png",
+    "avatar": "ribeira-winds/ultand.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "rose-tempest/buccar": {
+    "name": "Buccar",
+    "faction": "Rose Tempest",
+    "source": "Portraits/Rose Tempest/FEFW_Nintendo_Today_Buccar_profile.webp",
+    "avatar": "rose-tempest/buccar.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "rose-tempest/leda": {
+    "name": "Leda",
+    "faction": "Rose Tempest",
+    "source": "Portraits/Rose Tempest/FEFW_Nintendo_Today_Leda_profile.webp.png",
+    "avatar": "rose-tempest/leda.png",
+    "crop": [
+      0.2,
+      0.013,
+      0.5
+    ]
+  },
+  "rose-tempest/mu": {
+    "name": "Mu",
+    "faction": "Rose Tempest",
+    "source": "Portraits/Rose Tempest/FEFW_Nintendo_Today_Mu_profile.webp",
+    "avatar": "rose-tempest/mu.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "rose-tempest/olympia": {
+    "name": "Olympia",
+    "faction": "Rose Tempest",
+    "source": "Portraits/Rose Tempest/FEFW_Nintendo_Today_Olympia_profile.webp",
+    "avatar": "rose-tempest/olympia.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "rose-tempest/sirocco": {
+    "name": "Sirocco",
+    "faction": "Rose Tempest",
+    "source": "Portraits/Rose Tempest/FEFW_Nintendo_Today_Sirocco_profile.webp",
+    "avatar": "rose-tempest/sirocco.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "tale-of-the-moon/fianna": {
+    "name": "Fianna",
+    "faction": "Tale of the Moon",
+    "source": "Portraits/Tale of the Moon/FEFW_Nintendo_Today_Fianna_profile.webp",
+    "avatar": "tale-of-the-moon/fianna.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "tale-of-the-moon/ludia": {
+    "name": "Ludia",
+    "faction": "Tale of the Moon",
+    "source": "Portraits/Tale of the Moon/FEFW_Nintendo_Today_Ludia_profile.webp.png",
+    "avatar": "tale-of-the-moon/ludia.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "tale-of-the-moon/simon": {
+    "name": "Simon",
+    "faction": "Tale of the Moon",
+    "source": "Portraits/Tale of the Moon/FEFW_Nintendo_Today_Simon_profile.webp.png",
+    "avatar": "tale-of-the-moon/simon.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "tale-of-the-moon/talimun": {
+    "name": "Talimun",
+    "faction": "Tale of the Moon",
+    "source": "Portraits/Tale of the Moon/FEFW_Nintendo_Today_Talimun_profile.webp.png",
+    "avatar": "tale-of-the-moon/talimun.png",
+    "crop": [
+      0.27,
+      0.0,
+      0.5
+    ]
+  },
+  "tale-of-the-moon/ursula": {
+    "name": "Ursula",
+    "faction": "Tale of the Moon",
+    "source": "Portraits/Tale of the Moon/FEFW_Nintendo_Today_Ursula_profile.webp.png",
+    "avatar": "tale-of-the-moon/ursula.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "temple-army/anna": {
+    "name": "Anna",
+    "faction": "Temple Army",
+    "source": "Portraits/Temple Army/FEFW_Nintendo_Today_Anna_profile.webp.png",
+    "avatar": "temple-army/anna.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "temple-army/centurio": {
+    "name": "Centurio",
+    "faction": "Temple Army",
+    "source": "Portraits/Temple Army/FEFW_Nintendo_Today_Centurio_profile.webp.png",
+    "avatar": "temple-army/centurio.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "temple-army/sofia": {
+    "name": "Sofia",
+    "faction": "Temple Army",
+    "source": "Portraits/Temple Army/Sofia.png",
+    "avatar": "temple-army/sofia.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "unaffiliated/alexandra": {
+    "name": "Alexandra",
+    "faction": "Unaffiliated",
+    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Alexandra_profile.webp",
+    "avatar": "unaffiliated/alexandra.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "unaffiliated/bahr-vahn": {
+    "name": "Bahr Vahn",
+    "faction": "Unaffiliated",
+    "source": "Portraits/Unaffiliated/BahrVahnFE18Portrait.webp",
+    "avatar": "unaffiliated/bahr-vahn.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "unaffiliated/benditz": {
+    "name": "Benditz",
+    "faction": "Unaffiliated",
+    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Benditz_profile.webp",
+    "avatar": "unaffiliated/benditz.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "unaffiliated/catania": {
+    "name": "Catania",
+    "faction": "Unaffiliated",
+    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Catania_profile.webp",
+    "avatar": "unaffiliated/catania.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "unaffiliated/guzran": {
+    "name": "Guzran",
+    "faction": "Unaffiliated",
+    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Guzran_profile.webp",
+    "avatar": "unaffiliated/guzran.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "unaffiliated/inyoni": {
+    "name": "Inyoni",
+    "faction": "Unaffiliated",
+    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Inyoni_profile.webp",
+    "avatar": "unaffiliated/inyoni.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "unaffiliated/io": {
+    "name": "Io",
+    "faction": "Unaffiliated",
+    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Io_profile.webp",
+    "avatar": "unaffiliated/io.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "unaffiliated/jasmine": {
+    "name": "Jasmine",
+    "faction": "Unaffiliated",
+    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Jasmine_profile.webp",
+    "avatar": "unaffiliated/jasmine.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "unaffiliated/kiroc": {
+    "name": "Kiroc",
+    "faction": "Unaffiliated",
+    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Kiroc_profile.webp",
+    "avatar": "unaffiliated/kiroc.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "unaffiliated/majide": {
+    "name": "Majide",
+    "faction": "Unaffiliated",
+    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Majide_profile.webp",
+    "avatar": "unaffiliated/majide.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "unaffiliated/noctula": {
+    "name": "Noctula",
+    "faction": "Unaffiliated",
+    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Noctula_profile.webp",
+    "avatar": "unaffiliated/noctula.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "unaffiliated/nuzzuo": {
+    "name": "Nuzzuo",
+    "faction": "Unaffiliated",
+    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Nuzzuo_profile.webp.png",
+    "avatar": "unaffiliated/nuzzuo.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "unaffiliated/nydine": {
+    "name": "Nydine",
+    "faction": "Unaffiliated",
+    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Nydine_profile.webp",
+    "avatar": "unaffiliated/nydine.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "unaffiliated/peppe": {
+    "name": "Peppe",
+    "faction": "Unaffiliated",
+    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Peppe_profile.webp",
+    "avatar": "unaffiliated/peppe.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "unaffiliated/yang-jie": {
+    "name": "Yang Jie",
+    "faction": "Unaffiliated",
+    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Yang_Jie_profile.webp.png",
+    "avatar": "unaffiliated/yang-jie.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "unaffiliated/zarcone": {
+    "name": "Zarcone",
+    "faction": "Unaffiliated",
+    "source": "Portraits/Unaffiliated/FEFW_Nintendo_Today_Zarcone_profile.webp",
+    "avatar": "unaffiliated/zarcone.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  }
+}
