@@ -58,10 +58,43 @@ def fetch_webhook_info(url: str) -> dict:
 
 
 def send_message(url: str, content: str, username: str, avatar_url: str | None, files: list, retries: int = 3) -> dict:
+    """Post a message; returns Discord's message object (its "id" is what edit/delete need)."""
     payload = {"content": content, "username": username}
     if avatar_url:
         payload["avatar_url"] = avatar_url
+    return _request("POST", url, payload, files, params={"wait": "true"}, retries=retries)
 
+
+def message_url(url: str, message_id: str) -> str:
+    return f"{url.rstrip('/')}/messages/{message_id}"
+
+
+def fetch_message(url: str, message_id: str) -> dict:
+    """A message this webhook posted. Discord answers 404 for anything else (or a deleted message)."""
+    return _request("GET", message_url(url, message_id))
+
+
+def edit_message(url: str, message_id: str, content: str, files: list, keep_attachments: list) -> dict:
+    """Change a webhook message's text and images. The name and avatar it was posted with can't change.
+
+    keep_attachments lists the ids of images already on the message that should stay; the rest are removed.
+    """
+    attachments = [{"id": a} for a in keep_attachments]
+    attachments += [{"id": i, "filename": Path(f).name} for i, f in enumerate(files)]
+    return _request("PATCH", message_url(url, message_id), {"content": content, "attachments": attachments}, files)
+
+
+def delete_message(url: str, message_id: str) -> None:
+    _request("DELETE", message_url(url, message_id))
+
+
+def message_id_from(text: str) -> str | None:
+    """The message id in a pasted message link (the last number in it) or a bare id."""
+    ids = re.findall(r"\d{15,22}", text)
+    return ids[-1] if ids else None
+
+
+def _request(method: str, url: str, payload: dict | None = None, files: list = (), params=None, retries: int = 3):
     for _ in range(retries + 1):
         handles = []
         try:
@@ -73,10 +106,10 @@ def send_message(url: str, content: str, username: str, avatar_url: str | None, 
                     handles.append(fh)
                     mime = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
                     multipart[f"files[{i}]"] = (path.name, fh, mime)
-                r = requests.post(url, params={"wait": "true"},
-                                  data={"payload_json": json.dumps(payload)}, files=multipart, timeout=60)
+                r = requests.request(method, url, params=params,
+                                     data={"payload_json": json.dumps(payload)}, files=multipart, timeout=60)
             else:
-                r = requests.post(url, params={"wait": "true"}, json=payload, timeout=30)
+                r = requests.request(method, url, params=params, json=payload, timeout=30)
         except requests.RequestException as e:
             raise WebhookError(f"Couldn't reach Discord: {e}") from e
         finally:
@@ -90,8 +123,13 @@ def send_message(url: str, content: str, username: str, avatar_url: str | None, 
                 wait = 1.0
             time.sleep(min(wait, 30))
             continue
+        if r.status_code == 204:
+            return None
         if r.ok:
             return r.json()
+        if r.status_code == 404 and "/messages/" in url:
+            raise WebhookError("Discord can't find that message for this channel's webhook. It may have been "
+                               "deleted, or it was posted by someone else or through a different webhook.")
         raise WebhookError(f"Discord returned {r.status_code}: {_error_text(r)}")
 
     raise WebhookError("Rate limited by Discord; try again in a moment.")

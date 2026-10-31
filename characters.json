@@ -179,18 +179,6 @@
     ],
     "campaign": "Fortune's Weave"
   },
-  "oasis-server/friends/4d478a578f867dc05f291aa5b5309e2a": {
-    "name": "4d478a578f867dc05f291aa5b5309e2a",
-    "faction": "Friends",
-    "campaign": "OASIS Server",
-    "source": "Portraits/OASIS Server/Friends/4d478a578f867dc05f291aa5b5309e2a.webp",
-    "avatar": "oasis-server/friends/4d478a578f867dc05f291aa5b5309e2a.png",
-    "crop": [
-      0.0,
-      0.0,
-      1.0
-    ]
-  },
   "oasis-server/friends/aka-r": {
     "name": "aka r",
     "faction": "Friends",
@@ -216,7 +204,7 @@
     "campaign": "Fortune's Weave"
   },
   "oasis-server/friends/b1e56ef55f3792f5f7143095787ececb": {
-    "name": "b1e56ef55f3792f5f7143095787ececb",
+    "name": "Alam",
     "faction": "Friends",
     "campaign": "OASIS Server",
     "source": "Portraits/OASIS Server/Friends/b1e56ef55f3792f5f7143095787ececb.webp",
@@ -347,6 +335,18 @@
       1.0
     ]
   },
+  "oasis-server/friends/4d478a578f867dc05f291aa5b5309e2a": {
+    "name": "Liz",
+    "faction": "Friends",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Friends/4d478a578f867dc05f291aa5b5309e2a.webp",
+    "avatar": "oasis-server/friends/4d478a578f867dc05f291aa5b5309e2a.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
   "friends/minerharry": {
     "name": "minerharry",
     "faction": "Friends",
@@ -394,6 +394,18 @@
       1.0
     ],
     "campaign": "Fortune's Weave"
+  },
+  "oasis-server/friends/97f87dba2b15ebcc9f97566ab5154d48": {
+    "name": "OASIS Georg",
+    "faction": "Friends",
+    "campaign": "OASIS Server",
+    "source": "Portraits/OASIS Server/Friends/97f87dba2b15ebcc9f97566ab5154d48.webp",
+    "avatar": "oasis-server/friends/97f87dba2b15ebcc9f97566ab5154d48.png",
+    "crop": [
+      0.0,
+      0.0,
+      1.0
+    ]
   },
   "friends/starfall": {
     "name": "Starfall",
@@ -444,7 +456,7 @@
     "campaign": "Fortune's Weave"
   },
   "oasis-server/friends/that-nguy": {
-    "name": "that Nguy",
+    "name": "that_nguy",
     "faction": "Friends",
     "campaign": "OASIS Server",
     "source": "Portraits/OASIS Server/Friends/thatNguy.webp",
@@ -961,7 +973,7 @@
     ]
   },
   "oasis-server/kiris/peridot2": {
-    "name": "Peridot2",
+    "name": "Peridot",
     "faction": "Kiris",
     "campaign": "OASIS Server",
     "source": "Portraits/OASIS Server/Kiris/images.jpg",

@@ -1,0 +1,8 @@
+{
+    "token": "paste the bot token here (or set the DISCORD_BOT_TOKEN environment variable)",
+    "guild_id": "id of the server to watch",
+    "user_id": "366709133195476992",
+    "campaign": "",
+    "zoom": false,
+    "delete_original": true
+}

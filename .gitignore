@@ -1,6 +1,9 @@
 # Webhook URLs are secrets — anyone with one can post to that channel.
 channel_list.json
 
+# Holds the character bot's token, which is a secret too.
+bot_config.json
+
 # Last message sent per channel, shown as context in the preview.
 history.json
 

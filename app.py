@@ -9,15 +9,17 @@ from datetime import datetime
 from pathlib import Path
 
 from PyQt6.QtCore import (
-    QByteArray, QMimeData, QPoint, QPointF, QRect, QRectF, QSettings, QSize, Qt, QThread, QTimer, pyqtSignal,
+    QByteArray, QEvent, QMimeData, QObject, QPoint, QPointF, QRect, QRectF, QSettings, QSize, Qt, QThread, QTimer,
+    pyqtSignal,
 )
 from PyQt6.QtGui import (
     QAction, QColor, QDrag, QFont, QFontDatabase, QIcon, QKeySequence, QLinearGradient, QPainter, QPainterPath, QPalette,
-    QActionGroup, QImage, QPen, QPixmap, QPolygonF, QShortcut,
+    QActionGroup, QImage, QPen, QPixmap, QPolygonF, QShortcut, QTextCursor,
 )
 from PyQt6.QtWidgets import (
     QAbstractButton, QApplication, QButtonGroup, QCheckBox, QComboBox, QDialog, QDialogButtonBox, QFileDialog, QFormLayout, QFrame,
-    QGraphicsOpacityEffect, QHBoxLayout, QInputDialog, QLabel, QLayout, QLineEdit, QMainWindow, QMenu, QMessageBox,
+    QGraphicsOpacityEffect, QHBoxLayout, QInputDialog, QLabel, QLayout, QLineEdit, QListWidget, QListWidgetItem,
+    QMainWindow, QMenu, QMessageBox,
     QPlainTextEdit, QProgressDialog, QPushButton, QScrollArea, QSizePolicy, QSlider, QSplitter, QToolButton,
     QStackedWidget, QVBoxLayout, QWidget,
 )
@@ -72,6 +74,7 @@ FACTION_COLORS = {
 }
 
 VIEWS = {"classic": "Classic", "tarot": "Tarot Spread"}
+LOG_LIMIT = 200  # messages remembered per channel for Edit Mode
 FAVORITES = "__favorites__"
 ALL = "__all__"
 # Factions in this order first; any others (e.g. new folders) follow alphabetically.
@@ -195,6 +198,9 @@ def stylesheet():
                             selection-background-color: {GOLD}; selection-color: {INK}; }}
     QLineEdit:focus, QComboBox:focus {{ border-color: {GOLD}; }}
     QComboBox::drop-down {{ border: 0; width: 22px; }}
+    QComboBox#channelPicker {{ font-family: "{BODY_FAMILY}"; font-size: 16px; padding-right: 30px; }}
+    QComboBox#channelPicker QAbstractItemView::item {{ padding: 7px 12px; border: 0; }}
+    QComboBox#channelPicker QAbstractItemView::item:selected {{ background: {RAISED}; color: {GOLD_HI}; }}
     QComboBox QAbstractItemView {{ background: {PANEL}; border: 1px solid {LINE}; selection-background-color: {RAISED};
                                    selection-color: {GOLD_HI}; outline: 0; }}
 
@@ -215,8 +221,6 @@ def stylesheet():
     QPushButton#pill:hover {{ border-color: {GOLD}; }}
     QPushButton#pill[compact="true"] {{ padding: 4px 11px; font-size: 14px; }}
     QPushButton#pill:disabled {{ color: #6d6252; border-color: {LINE}; }}
-    QPushButton#pillAdd {{ background: transparent; border: 1px dashed {LINE_HI}; border-radius: 14px;
-                           padding: 5px 14px; color: {GOLD}; font-size: 15px; }}
     QPushButton#attach {{ background: transparent; border: 2px dashed {GOLD}; color: {GOLD};
                           padding: 0; }}
     QPushButton#attach:hover {{ border-color: {GOLD_HI}; color: {GOLD_HI}; }}
@@ -241,6 +245,19 @@ def stylesheet():
     QToolButton#fileMenu {{ background: transparent; border: 0; color: {MUTED}; font-size: 15px; padding: 4px 8px; }}
     QToolButton#fileMenu:hover {{ color: {GOLD_HI}; }}
     QToolButton#fileMenu::menu-indicator {{ image: none; }}
+    QToolButton#winButton, QToolButton#winClose {{ background: transparent; border: 0; color: {MUTED};
+        font-family: "Segoe Fluent Icons", "Segoe MDL2 Assets"; font-size: 10px; }}
+    QToolButton#winButton:hover {{ background: {RAISED}; color: {GOLD_HI}; }}
+    QToolButton#winButton:pressed {{ background: {LINE}; }}
+    QToolButton#winClose:hover {{ background: #c42b1c; color: #ffffff; }}
+    QToolButton#winClose:pressed {{ background: #a3261a; color: #ffffff; }}
+    QToolButton#fileMenu:checked {{ background: {RAISED}; color: {GOLD_HI}; border: 1px solid {GOLD}; border-radius: 2px; }}
+    #editHeading {{ color: {MUTED}; }}
+    QListWidget#editList {{ background: {INK}; border: 1px solid {LINE}; border-radius: 2px; outline: 0; font-size: 15px; }}
+    QListWidget#editList::item {{ padding: 5px 8px; border-bottom: 1px solid {LINE}; }}
+    QListWidget#editList::item:hover {{ background: #221d16; }}
+    QListWidget#editList::item:selected {{ background: {RAISED}; color: {GOLD_HI}; }}
+    QListWidget#editList::item:disabled {{ color: {MUTED}; }}
     QMenu {{ background: {PANEL}; border: 1px solid {LINE}; padding: 4px; }}
     QMenu::item {{ padding: 6px 22px; }}
     QMenu::item:selected {{ background: {RAISED}; color: {GOLD_HI}; }}
@@ -271,6 +288,12 @@ def stylesheet():
     #tarot QPushButton#pill:checked {{ background: rgba(232, 200, 114, 38); border-color: {TAROT_GOLD}; color: {TAROT_GOLD}; }}
     #tarot QPushButton#pill:disabled {{ color: #565486; border-color: #2a2950; }}
     #tarot QScrollBar::handle {{ background: {TAROT_LINE}; }}
+    #tarot #editHeading {{ color: #8d87c4; }}
+    #tarot QListWidget#editList {{ background: {TAROT_NIGHT}; border-color: {TAROT_LINE}; border-radius: 6px; }}
+    #tarot QListWidget#editList::item {{ border-bottom-color: {TAROT_LINE}; }}
+    #tarot QListWidget#editList::item:hover {{ background: rgba(255, 255, 255, 14); }}
+    #tarot QListWidget#editList::item:selected {{ background: rgba(232, 200, 114, 38); color: {TAROT_GOLD}; }}
+    #tarot QListWidget#editList::item:disabled {{ color: {TAROT_LAVENDER}; }}
     QPushButton#post {{ background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 {TAROT_GOLD}, stop:1 #b8923e);
                         color: {TAROT_NIGHT}; border: 0; border-radius: 4px; font-family: "{DISPLAY_FAMILY}";
                         font-size: 16px; font-weight: 700; letter-spacing: 3px; }}
@@ -1237,49 +1260,64 @@ class MessageRow(QWidget):
         self.images.setVisible(bool(images))
 
 
-class ChannelPills(QWidget):
+class ChannelPicker(QComboBox):
+    """The channel to post to, as a drop-down. Its last entry adds a channel; right-click removes the current one."""
+
     selected = pyqtSignal(str)
     addRequested = pyqtSignal()
     removeRequested = pyqtSignal(str)
+    ADD = "__add__"
 
     def __init__(self):
         super().__init__()
-        self.flow = FlowLayout(self, hspacing=6, vspacing=6)
-        self.group = QButtonGroup(self)
-        self.group.setExclusive(True)
-        self.group.buttonClicked.connect(lambda b: self.selected.emit(b.property("channel")))
+        self.last = ""
+        self.setObjectName("channelPicker")
+        self.setAccessibleName("Channel")
+        self.setPlaceholderText("No channels yet")
+        self.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.setToolTip("The channel to post to · right-click to remove it")
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.customContextMenuRequested.connect(self._menu)
+        self.activated.connect(self._activated)
 
     def set_channels(self, names, current):
-        for b in self.group.buttons():
-            self.group.removeButton(b)
-        while self.flow.count():
-            self.flow.takeAt(0).widget().deleteLater()
+        self.blockSignals(True)
+        self.clear()
         for name in names:
-            b = QPushButton(f"# {name}")
-            b.setObjectName("pill")
-            b.setCheckable(True)
-            b.setChecked(name == current)
-            b.setProperty("channel", name)
-            b.setCursor(Qt.CursorShape.PointingHandCursor)
-            b.setToolTip("Right-click to remove")
-            b.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-            b.customContextMenuRequested.connect(lambda _, n=name, btn=b: self._menu(n, btn))
-            self.group.addButton(b)
-            self.flow.addWidget(b)
-        add = QPushButton("+ Channel")
-        add.setObjectName("pillAdd")
-        add.setCursor(Qt.CursorShape.PointingHandCursor)
-        add.clicked.connect(self.addRequested)
-        self.flow.addWidget(add)
+            self.addItem(f"# {name}", name)
+        self.addItem("+ Add channel…", self.ADD)
+        self.setCurrentIndex(self.findData(current) if current in names else -1)
+        self.blockSignals(False)
+        self.last = self.current()
 
     def current(self):
-        b = self.group.checkedButton()
-        return b.property("channel") if b else ""
+        data = self.currentData()
+        return data if data and data != self.ADD else ""
 
-    def _menu(self, name, button):
-        menu = QMenu(self)
-        menu.addAction(f'Remove "# {name}"…', lambda: self.removeRequested.emit(name))
-        menu.exec(button.mapToGlobal(QPoint(0, button.height())))
+    def _activated(self, index):
+        data = self.itemData(index)
+        if data == self.ADD:
+            # Show the previous channel again; adding one selects it once it exists.
+            self.setCurrentIndex(self.findData(self.last) if self.last else -1)
+            self.addRequested.emit()
+        elif data != self.last:
+            self.last = data
+            self.selected.emit(data)
+
+    def paintEvent(self, e):
+        super().paintEvent(e)
+        p = QPainter(self)
+        p.setRenderHint(QPainter.RenderHint.Antialiasing)
+        p.setPen(QPen(QColor(GOLD), 1.6))
+        x, y = self.width() - 18, self.height() / 2
+        p.drawPolyline(QPolygonF([QPointF(x - 4.5, y - 2.5), QPointF(x, y + 2), QPointF(x + 4.5, y - 2.5)]))
+
+    def _menu(self, pos):
+        name = self.current()
+        if name:
+            menu = QMenu(self)
+            menu.addAction(f'Remove "# {name}"…', lambda: self.removeRequested.emit(name))
+            menu.exec(self.mapToGlobal(pos))
 
 
 class ServerBadge(QAbstractButton):
@@ -1760,27 +1798,105 @@ class FramingDialog(QDialog):
         return out
 
 
-class SendWorker(QThread):
-    done = pyqtSignal(bool, str)
+class DiscordWorker(QThread):
+    """Runs one Discord call off the UI thread; done carries (ok, Discord's reply or the error text)."""
 
-    def __init__(self, url, content, username, avatar_url, files):
+    done = pyqtSignal(bool, object)
+
+    def __init__(self, fn, *args):
         super().__init__()
-        self.args = (url, content, username, avatar_url, files)
+        self.fn, self.args = fn, args
 
     def run(self):
         try:
-            discord_client.send_message(*self.args)
-            self.done.emit(True, "")
+            self.done.emit(True, self.fn(*self.args))
         except discord_client.WebhookError as e:
             self.done.emit(False, str(e))
 
 
+def when_text(iso):
+    """'3:14 PM' today, 'Oct 27, 3:14 PM' otherwise."""
+    sent = datetime.fromisoformat(iso)
+    when = sent.strftime("%I:%M %p").lstrip("0")
+    return when if sent.date() == datetime.now().date() else sent.strftime("%b %d, ") + when
+
+
+def local_time(discord_timestamp):
+    try:
+        return datetime.fromisoformat(discord_timestamp).astimezone().replace(tzinfo=None).isoformat(timespec="seconds")
+    except (TypeError, ValueError):
+        return datetime.now().isoformat(timespec="seconds")
+
+
 # ---- main window ---------------------------------------------------------
+
+class EdgeResizer(QObject):
+    """Lets the frameless window be resized from its edges and corners, like a normal window."""
+
+    MARGIN = 5
+    CURSORS = {
+        Qt.Edge.LeftEdge: Qt.CursorShape.SizeHorCursor, Qt.Edge.RightEdge: Qt.CursorShape.SizeHorCursor,
+        Qt.Edge.TopEdge: Qt.CursorShape.SizeVerCursor, Qt.Edge.BottomEdge: Qt.CursorShape.SizeVerCursor,
+        Qt.Edge.LeftEdge | Qt.Edge.TopEdge: Qt.CursorShape.SizeFDiagCursor,
+        Qt.Edge.RightEdge | Qt.Edge.BottomEdge: Qt.CursorShape.SizeFDiagCursor,
+        Qt.Edge.RightEdge | Qt.Edge.TopEdge: Qt.CursorShape.SizeBDiagCursor,
+        Qt.Edge.LeftEdge | Qt.Edge.BottomEdge: Qt.CursorShape.SizeBDiagCursor,
+    }
+
+    def __init__(self, window):
+        super().__init__(window)
+        self.window = window
+        self.cursor = None
+
+    def edges(self, global_pos):
+        w = self.window
+        if w.isMaximized() or w.isFullScreen():
+            return None
+        pos, m = w.mapFromGlobal(global_pos), self.MARGIN
+        edges = Qt.Edge(0)
+        if pos.x() < m:
+            edges |= Qt.Edge.LeftEdge
+        elif pos.x() >= w.width() - m:
+            edges |= Qt.Edge.RightEdge
+        if pos.y() < m:
+            edges |= Qt.Edge.TopEdge
+        elif pos.y() >= w.height() - m:
+            edges |= Qt.Edge.BottomEdge
+        return edges or None
+
+    def set_cursor(self, shape):
+        if shape == self.cursor:
+            return
+        if self.cursor is not None:
+            QApplication.restoreOverrideCursor()
+        if shape is not None:
+            QApplication.setOverrideCursor(shape)
+        self.cursor = shape
+
+    def eventFilter(self, obj, e):
+        t = e.type()
+        if t == QEvent.Type.MouseMove and not e.buttons():
+            edges = self.edges(e.globalPosition().toPoint())
+            self.set_cursor(self.CURSORS.get(edges) if edges else None)
+        elif t == QEvent.Type.MouseButtonPress and e.button() == Qt.MouseButton.LeftButton:
+            edges = self.edges(e.globalPosition().toPoint())
+            if edges:
+                self.set_cursor(None)
+                self.window.windowHandle().startSystemResize(edges)
+                return True
+        elif t == QEvent.Type.Leave:
+            self.set_cursor(None)
+        return False
+
 
 class MainWindow(QMainWindow):
     def __init__(self, characters):
         super().__init__()
         self.setWindowTitle("Set in Stone Character Board")
+        # No Windows title bar: the header is the title bar, with its own minimize/maximize/close buttons.
+        self.setWindowFlags(Qt.WindowType.Window | Qt.WindowType.FramelessWindowHint
+                            | Qt.WindowType.WindowSystemMenuHint | Qt.WindowType.WindowMinMaxButtonsHint)
+        self.setContentsMargins(1, 1, 1, 1)  # room for the thin border drawn in paintEvent
         self.characters = characters
         self.settings = load_json(SETTINGS_FILE, {"avatar_base_url": ""})
         self.history = load_json(HISTORY_FILE, {})
@@ -1795,6 +1911,10 @@ class MainWindow(QMainWindow):
         self.servers = self._load_servers()
         self.current_server = self.ui_state.value("server") or ""
         self.worker = None
+        self.edit_worker = None
+        self.edit_mode = False
+        self.edit_target = None  # the posted message being edited
+        self.draft = None  # what was in the composer before Edit Mode, put back after
         self.warned_no_avatar = False
         self.selected_cid = None
         self.attachments = []
@@ -1815,6 +1935,8 @@ class MainWindow(QMainWindow):
         self._restore_state()
         self.set_view(self.ui_state.value("view") or "classic")
         self.refresh_preview()
+        self.winId()  # create the native window now, so its edges can be watched
+        self.windowHandle().installEventFilter(EdgeResizer(self))
 
     # ---- construction -------------------------------------------------
 
@@ -1849,8 +1971,10 @@ class MainWindow(QMainWindow):
         header.setObjectName("header")
         header.setFixedHeight(46)
         hl = QHBoxLayout(header)
-        hl.setContentsMargins(14, 0, 10, 0)
+        hl.setContentsMargins(14, 0, 0, 0)
         hl.setSpacing(10)
+        header.installEventFilter(self)  # drag to move, double-click to maximize
+        self.header = header
         banner = QLabel()
         pix = QPixmap(str(BANNER_FILE))
         if not pix.isNull():
@@ -1862,6 +1986,14 @@ class MainWindow(QMainWindow):
         hl.addWidget(banner)
         hl.addWidget(title)
         hl.addStretch()
+        self.edit_button = QToolButton()
+        self.edit_button.setObjectName("fileMenu")
+        self.edit_button.setText("Edit Mode")
+        self.edit_button.setCheckable(True)
+        self.edit_button.setShortcut(QKeySequence("Ctrl+E"))
+        self.edit_button.setToolTip("Edit or delete messages already posted to a channel (Ctrl+E)")
+        self.edit_button.toggled.connect(self.set_edit_mode)
+        hl.addWidget(self.edit_button)
         view_button = QToolButton()
         view_button.setObjectName("fileMenu")
         view_button.setText("View  ▾")
@@ -1893,7 +2025,59 @@ class MainWindow(QMainWindow):
         menu.addAction("Quit", self.close)
         menu_button.setMenu(menu)
         hl.addWidget(menu_button)
+        hl.addSpacing(6)
+        window_row = QHBoxLayout()
+        window_row.setSpacing(0)
+        self.window_buttons = {}
+        for key, glyph, tip, slot in (("min", "\uE921", "Minimize", self.showMinimized),
+                                      ("max", "\uE922", "Maximize", self.toggle_maximized),
+                                      ("close", "\uE8BB", "Close", self.close)):
+            b = QToolButton()
+            b.setObjectName("winClose" if key == "close" else "winButton")
+            b.setText(glyph)
+            b.setFixedSize(46, 46)
+            b.setToolTip(tip)
+            b.setAccessibleName(tip)
+            b.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+            b.clicked.connect(slot)
+            window_row.addWidget(b)
+            self.window_buttons[key] = b
+        hl.addLayout(window_row)
         return header
+
+    # ---- window frame -------------------------------------------------
+
+    def toggle_maximized(self):
+        if self.isMaximized():
+            self.showNormal()
+        else:
+            self.showMaximized()
+
+    def eventFilter(self, obj, e):
+        if obj is getattr(self, "header", None) and e.type() in (QEvent.Type.MouseButtonPress,
+                                                                 QEvent.Type.MouseButtonDblClick):
+            if e.button() == Qt.MouseButton.LeftButton:
+                if e.type() == QEvent.Type.MouseButtonDblClick:
+                    self.toggle_maximized()
+                else:
+                    self.windowHandle().startSystemMove()
+                return True
+        return super().eventFilter(obj, e)
+
+    def changeEvent(self, e):
+        super().changeEvent(e)
+        if e.type() == QEvent.Type.WindowStateChange and hasattr(self, "window_buttons"):
+            maxed = self.isMaximized()
+            self.window_buttons["max"].setText("\uE923" if maxed else "\uE922")
+            self.window_buttons["max"].setToolTip("Restore" if maxed else "Maximize")
+            self.setContentsMargins(*([0] * 4 if maxed else [1] * 4))
+
+    def paintEvent(self, e):
+        super().paintEvent(e)
+        if not self.isMaximized():
+            p = QPainter(self)
+            p.setPen(QColor(LINE_HI))
+            p.drawRect(self.rect().adjusted(0, 0, -1, -1))
 
     def _build_nav(self):
         nav = QWidget()
@@ -2000,6 +2184,7 @@ class MainWindow(QMainWindow):
         where.addStretch()
         where.itemAt(0).widget().setStyleSheet(f"color: {MUTED};")
         pl.addLayout(where)
+        pl.addWidget(self.slot("edits", "classic", self._build_edit_panel()))
 
         card = QFrame()
         card.setObjectName("previewCard")
@@ -2070,12 +2255,12 @@ class MainWindow(QMainWindow):
         to_row = QHBoxLayout()
         to_row.setSpacing(8)
         to_label = label("to", "muted", body_font(16, italic=True))
-        to_row.addWidget(to_label, 0, Qt.AlignmentFlag.AlignTop)
-        self.pills = ChannelPills()
-        self.pills.selected.connect(self.select_channel)
-        self.pills.addRequested.connect(self.add_channel)
-        self.pills.removeRequested.connect(self.remove_channel)
-        to_row.addWidget(self.slot("pills", "classic", self.pills), 1)
+        to_row.addWidget(to_label)
+        self.channel_box = ChannelPicker()
+        self.channel_box.selected.connect(self.select_channel)
+        self.channel_box.addRequested.connect(self.add_channel)
+        self.channel_box.removeRequested.connect(self.remove_channel)
+        to_row.addWidget(self.slot("channel", "classic", self.channel_box), 1)
         col.addLayout(to_row)
 
         write_row = QHBoxLayout()
@@ -2169,6 +2354,7 @@ class MainWindow(QMainWindow):
         for key, widget in self.shared.items():
             self.slots[key][view].layout().addWidget(widget)
         self.rail.set_horizontal(view == "tarot")
+        self.fit_edit_layout()
         self.stack.setCurrentIndex(list(VIEWS).index(view))
         self.view_actions[view].setChecked(True)
         if view == "classic":
@@ -2214,6 +2400,8 @@ class MainWindow(QMainWindow):
         self.stage = TarotStage()
         self.stage.stepRequested.connect(self.step_card)
         stage_col.addWidget(self.stage, 1)
+        # In Edit Mode the message list takes the stage's place.
+        stage_col.addWidget(self.slot("edits", "tarot"), 1)
 
         reading = QWidget()
         reading.setObjectName("reading")
@@ -2234,7 +2422,7 @@ class MainWindow(QMainWindow):
         rhead.addWidget(self.slot("counter", "tarot"))
         rl.addLayout(rhead)
         rl.addWidget(self.slot("rail", "tarot"))
-        rl.addWidget(self.slot("pills", "tarot"))
+        rl.addWidget(self.slot("channel", "tarot"))
         rl.addWidget(self.slot("as", "tarot"))
         preview = self.slot("preview", "tarot")
         preview.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Ignored)
@@ -2361,9 +2549,12 @@ class MainWindow(QMainWindow):
         self.stage.set_cards((self.characters[cid], self.portrait(cid)), prev, nxt)
 
     def _set_sending(self, on):
-        for button, text in ((self.send_btn, "SEAL && SEND"), (self.post_btn, "POST")):
-            button.setEnabled(not on)
-            button.setText("SENDING…" if on else text)
+        editing = self.edit_mode
+        labels = ((self.send_btn, "SAVE EDIT" if editing else "SEAL && SEND"),
+                  (self.post_btn, "SAVE EDIT" if editing else "POST"))
+        for button, text in labels:
+            button.setEnabled(not on and (not editing or bool(self.edit_target)))
+            button.setText(("SAVING…" if editing else "SENDING…") if on else text)
 
     # ---- roster -------------------------------------------------------
 
@@ -2516,7 +2707,7 @@ class MainWindow(QMainWindow):
         self.selected_cid = cid
         if cid in self.tiles:
             self.tiles[cid].set_selected(True)
-        if reset_name:
+        if reset_name and not self.edit_target:
             self.name_edit.setText(self.characters[cid]["name"])
         self.refresh_preview()
 
@@ -2535,7 +2726,7 @@ class MainWindow(QMainWindow):
             self.apply_filter()
 
     def reset_name(self):
-        if self.selected_cid:
+        if self.selected_cid and not self.edit_target:
             self.name_edit.setText(self.characters[self.selected_cid]["name"])
 
     def save_default_name(self):
@@ -2864,12 +3055,13 @@ class MainWindow(QMainWindow):
         self.populate_channels(self.last_channel.get(select))
 
     def select_server(self, name):
-        if self.pills.current():
-            self.last_channel[self.current_server] = self.pills.current()
+        if self.channel_box.current():
+            self.last_channel[self.current_server] = self.channel_box.current()
         self.populate_servers(name)
 
     def select_channel(self, channel):
         self.last_channel[self.current_server] = channel
+        self.channel_changed()
         self.refresh_preview()
 
     def populate_channels(self, select=None):
@@ -2877,7 +3069,8 @@ class MainWindow(QMainWindow):
         select = select if select in channels else next(iter(channels), "")
         if select:
             self.last_channel[self.current_server] = select
-        self.pills.set_channels(list(channels), select)
+        self.channel_box.set_channels(list(channels), select)
+        self.channel_changed()
         self.refresh_preview()
         self.fit_composer()
 
@@ -2946,7 +3139,7 @@ class MainWindow(QMainWindow):
             self.history.pop(servers.history_key(server, name), None)
             save_json(HISTORY_FILE, self.history)
             self.save_servers()
-            self.populate_channels(self.pills.current())
+            self.populate_channels(self.channel_box.current())
 
     def rename_server(self, old):
         new = self.ask_server_name("Rename server", "Server name:", old)
@@ -3030,19 +3223,15 @@ class MainWindow(QMainWindow):
     # ---- compose & preview --------------------------------------------
 
     def refresh_preview(self):
-        server, channel = self.current_server, self.pills.current()
+        server, channel = self.current_server, self.channel_box.current()
         self.preview_channel.setText(f"{server}  ·  # {channel}" if channel else "— add a channel —")
 
         last = self.history.get(servers.history_key(server, channel))
-        if last and last.get("cid") in self.characters:
-            sent = datetime.fromisoformat(last["time"])
-            when = sent.strftime("%I:%M %p").lstrip("0")
-            if sent.date() != datetime.now().date():
-                when = sent.strftime("%b %d, ") + when
+        if last and last.get("cid") in self.characters and not self.edit_mode:
             images = last.get("images", 0)
             text = last["content"] + (f"\n[{images} image{'s' if images != 1 else ''}]" if images else "")
             self.context_row.set_message(self.pixmap(last["cid"], last.get("zoom", False)), last["name"],
-                                         f"Last sent here · {when}", text)
+                                         f"Last sent here · {when_text(last['time'])}", text)
             self.context_row.show()
         else:
             self.context_row.hide()
@@ -3061,9 +3250,21 @@ class MainWindow(QMainWindow):
                                     else "This character has no zoomed avatar")
         self.profile.set_character(self.characters.get(cid), self.pixmap(cid, zoomed) if cid else QPixmap())
         self.update_stage()
-        self.message_row.setVisible(bool(cid))
-        self.placeholder.setVisible(not cid)
-        if cid:
+        t = self.edit_target
+        shown = bool(t) if self.edit_mode else bool(cid)
+        self.message_row.setVisible(shown)
+        self.placeholder.setVisible(not shown)
+        self.placeholder.setText("Pick a message above to edit it." if self.edit_mode
+                                 else "Choose a character from the roster.")
+        if t:
+            kept = len(t["attachments"]) if self.keep_images.isChecked() else 0
+            meta = f"editing · posted {when_text(t['time'])}"
+            if kept:
+                meta += f" · keeps {kept} image{'s' if kept != 1 else ''}"
+            avatar = self.pixmap(t["cid"], t["zoom"]) if t["cid"] in self.characters else QPixmap()
+            self.message_row.set_message(avatar, t["name"], meta, self.message.toPlainText(),
+                                         self.attachments, removable=True)
+        elif shown:
             self.message_row.set_message(self.pixmap(cid, zoomed), self.name_edit.text().strip(),
                                          f'{faction_label(self.characters[cid]["faction"])} · unsent',
                                          self.message.toPlainText(), self.attachments, removable=True)
@@ -3104,7 +3305,9 @@ class MainWindow(QMainWindow):
     def send(self):
         if self.worker and self.worker.isRunning():
             return
-        cid, server, channel = self.selected_cid, self.current_server, self.pills.current()
+        if self.edit_mode:
+            return self.save_edit()
+        cid, server, channel = self.selected_cid, self.current_server, self.channel_box.current()
         if not cid:
             return QMessageBox.warning(self, "Send", "Pick a character first.")
         if not channel:
@@ -3128,21 +3331,346 @@ class MainWindow(QMainWindow):
             self.warned_no_avatar = True
 
         self._set_sending(True)
-        self.worker = SendWorker(self.channel_url(server, channel), content, username, avatar, files)
+        self.worker = DiscordWorker(discord_client.send_message, self.channel_url(server, channel),
+                                    content, username, avatar, files)
         self.worker.done.connect(
-            lambda ok, err: self.on_sent(ok, err, cid, username, server, channel, content, files, zoomed))
+            lambda ok, result: self.on_sent(ok, result, cid, username, server, channel, content, files, zoomed))
         self.worker.start()
 
-    def on_sent(self, ok, err, cid, username, server, channel, content, files, zoomed=False):
+    def on_sent(self, ok, result, cid, username, server, channel, content, files, zoomed=False):
         self._set_sending(False)
         if not ok:
-            return QMessageBox.critical(self, "Send failed", err)
-        self.history[servers.history_key(server, channel)] = {"cid": cid, "name": username, "content": content, "images": len(files),
-                                 "zoom": zoomed, "time": datetime.now().isoformat(timespec="seconds")}
+            return QMessageBox.critical(self, "Send failed", result)
+        key = servers.history_key(server, channel)
+        entry = {"cid": cid, "name": username, "content": content, "images": len(files),
+                 "zoom": zoomed, "time": datetime.now().isoformat(timespec="seconds")}
+        # Every post is remembered (with Discord's message id) so Edit Mode can find it again.
+        log = list(self.history.get(key, {}).get("log", []))
+        if (result or {}).get("id"):
+            entry["id"] = str(result["id"])
+            log.append(dict(entry))
+        self.history[key] = {**entry, "log": log[-LOG_LIMIT:]}
         save_json(HISTORY_FILE, self.history)
         self.attachments.clear()
         self.message.clear()  # also refreshes the preview
         self.statusBar().showMessage(f"Sent as {username} to {server} · # {channel}", 6000)
+
+    # ---- edit mode ----------------------------------------------------
+
+    def _build_edit_panel(self):
+        panel = self.edit_panel = QWidget()
+        layout = QVBoxLayout(panel)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(6)
+        head = QHBoxLayout()
+        head.setSpacing(8)
+        head.addWidget(label("POSTED HERE", "editHeading", display_font(12, QFont.Weight.DemiBold, 124)))
+        head.addStretch()
+        older = QPushButton("+ Older message…")
+        older.setObjectName("ghost")
+        older.setCursor(Qt.CursorShape.PointingHandCursor)
+        older.setToolTip("Edit a message posted before Edit Mode existed: paste its link "
+                         "(in Discord, right-click the message → Copy Message Link)")
+        older.clicked.connect(self.open_message_link)
+        head.addWidget(older)
+        layout.addLayout(head)
+        self.edit_list = QListWidget()
+        self.edit_list.setObjectName("editList")
+        self.edit_list.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.edit_list.setAccessibleName("Messages posted to this channel")
+        self.edit_list.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.edit_list.customContextMenuRequested.connect(self.edit_list_menu)
+        self.edit_list.itemClicked.connect(lambda item: self.load_edit(item.data(Qt.ItemDataRole.UserRole)))
+        self.edit_list.itemActivated.connect(lambda item: self.load_edit(item.data(Qt.ItemDataRole.UserRole)))
+        layout.addWidget(self.edit_list)
+        status = QHBoxLayout()
+        status.setSpacing(8)
+        self.edit_status = label("", "muted", body_font(14, italic=True))
+        # One line, no word wrap: a wrapping label would push the composer down.
+        self.edit_status.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
+        self.keep_images = QCheckBox()
+        self.keep_images.setChecked(True)
+        self.keep_images.setToolTip("Untick to take the images already on the message off it")
+        self.keep_images.toggled.connect(lambda _: self.refresh_preview())
+        self.edit_cancel = QPushButton("Cancel")
+        self.edit_cancel.setObjectName("ghost")
+        self.edit_cancel.setToolTip("Stop editing this message without saving")
+        self.edit_cancel.clicked.connect(self.cancel_edit)
+        status.addWidget(self.edit_status, 1)
+        status.addWidget(self.keep_images)
+        status.addWidget(self.edit_cancel)
+        layout.addLayout(status)
+        panel.hide()
+        return panel
+
+    def fit_edit_layout(self):
+        """Edit Mode borrows the room of the character banner (Classic) or the card stage (Tarot)."""
+        on, tarot = self.edit_mode, self.view == "tarot"
+        self.profile.setVisible(not on)
+        self.stage.setVisible(not (on and tarot))
+        if tarot:
+            self.edit_list.setMinimumHeight(0)
+            self.edit_list.setMaximumHeight(16777215)
+        else:
+            self.edit_list.setFixedHeight(150)
+        if not tarot:
+            self.fit_composer()
+
+    def channel_key(self):
+        return servers.history_key(self.current_server, self.channel_box.current())
+
+    def channel_log(self, key=None):
+        return list(self.history.get(key or self.channel_key(), {}).get("log", []))
+
+    def _save_log(self, key, log):
+        entry = self.history.setdefault(key, {})
+        log.sort(key=lambda m: int(m["id"]))
+        entry["log"] = log[-LOG_LIMIT:]
+        latest = next((m for m in log if m["id"] == entry.get("id")), None)
+        if latest:  # the faded "last sent" line follows edits to its message
+            entry.update(latest)
+        save_json(HISTORY_FILE, self.history)
+
+    def set_edit_mode(self, on):
+        if on == self.edit_mode:
+            return
+        self.edit_mode = on
+        self.edit_button.setChecked(on)
+        self.edit_target = None
+        if on:
+            self.draft = (self.message.toPlainText(), list(self.attachments), self.name_edit.text())
+            self.attachments.clear()
+            self.message.clear()
+        elif self.draft:
+            text, files, name = self.draft
+            self.draft = None
+            self.attachments = files
+            self.name_edit.setText(name)
+            self.message.setPlainText(text)
+        self.edit_panel.setVisible(on)
+        self.fit_edit_layout()
+        self.populate_edit_list()
+        self.update_edit_state()
+        self.statusBar().showMessage("Edit Mode: pick a message to change it" if on else "Back to posting", 4000)
+
+    def update_edit_state(self):
+        t = self.edit_target
+        self.name_edit.setEnabled(not t)
+        if t:
+            self.name_edit.setText(t["name"])
+        n = len(t["attachments"]) if t else 0
+        self.keep_images.setVisible(bool(n))
+        self.keep_images.setText(f"Keep its {n} image{'s' if n != 1 else ''}")
+        self.edit_cancel.setVisible(bool(t))
+        if t:
+            self.edit_status.setText(f"Editing {t['name'] or 'this'}'s message")
+            self.edit_status.setToolTip("A posted message keeps the name and portrait it was posted with.")
+        else:
+            self.edit_status.setText("Click a message to edit it · right-click to delete it")
+            self.edit_status.setToolTip("")
+        self._set_sending(bool(self.worker and self.worker.isRunning()))
+        self.refresh_preview()
+
+    def populate_edit_list(self):
+        self.edit_list.clear()
+        if not self.edit_mode:
+            return
+        log = self.channel_log()
+        for m in reversed(log):
+            first = next((line for line in m.get("content", "").splitlines() if line.strip()), "")
+            snippet = first if len(first) <= 64 else first[:63].rstrip() + "…"
+            extras = []
+            if m.get("images"):
+                extras.append(f"{m['images']} image{'s' if m['images'] != 1 else ''}")
+            if m.get("edited"):
+                extras.append("edited")
+            item = QListWidgetItem(f"{m.get('name') or 'Unknown'}  ·  {when_text(m['time'])}"
+                                   + "".join(f"  ·  {e}" for e in extras) + f"\n{snippet or '—'}")
+            item.setData(Qt.ItemDataRole.UserRole, m["id"])
+            item.setToolTip(m.get("content", "")[:500])
+            self.edit_list.addItem(item)
+            if self.edit_target and self.edit_target["id"] == m["id"]:
+                self.edit_list.setCurrentItem(item)
+        if not log:
+            item = QListWidgetItem("Nothing posted here from the app yet.\n"
+                                   "Use “+ Older message…” to bring in an earlier post.")
+            item.setFlags(Qt.ItemFlag.NoItemFlags)
+            self.edit_list.addItem(item)
+
+    def channel_changed(self):
+        if not hasattr(self, "edit_list"):
+            return
+        if self.edit_target and self.edit_target["key"] != self.channel_key():
+            self.cancel_edit()
+        self.populate_edit_list()
+
+    def cancel_edit(self):
+        self.edit_target = None
+        self.attachments.clear()
+        self.message.clear()
+        self.edit_list.clearSelection()
+        self.update_edit_state()
+
+    def edit_list_menu(self, pos):
+        item = self.edit_list.itemAt(pos)
+        mid = item.data(Qt.ItemDataRole.UserRole) if item else None
+        if not mid:
+            return
+        key = self.channel_key()
+        menu = QMenu(self)
+        menu.addAction("Edit", lambda: self.load_edit(mid))
+        menu.addAction("Copy message ID", lambda: QApplication.clipboard().setText(mid))
+        menu.addSeparator()
+        menu.addAction("Delete from Discord…", lambda: self.delete_posted(mid))
+        menu.addAction("Remove from this list", lambda: self.forget_message(key, mid))
+        menu.exec(self.edit_list.viewport().mapToGlobal(pos))
+
+    def guess_character(self, name):
+        """The character a message brought in by link was posted as, going by its display name."""
+        name = name.strip().lower()
+        for pool in (self.campaign_characters(), self.characters):
+            for cid, c in pool.items():
+                if c["name"].lower() == name:
+                    return cid
+        return None
+
+    def open_message_link(self):
+        if not self.channel_url(self.current_server, self.channel_box.current()):
+            return QMessageBox.warning(self, "Older message", "Pick a channel first.")
+        text, ok = QInputDialog.getText(
+            self, "Older message",
+            f"Paste the link of a message the app posted in # {self.channel_box.current()}\n"
+            "(in Discord, right-click the message → Copy Message Link), or its ID:")
+        if not ok or not text.strip():
+            return
+        mid = discord_client.message_id_from(text)
+        if not mid:
+            return QMessageBox.warning(self, "Older message", "That doesn't look like a message link or ID.")
+        self.load_edit(mid)
+
+    def load_edit(self, mid):
+        if not mid or (self.edit_worker and self.edit_worker.isRunning()):
+            return
+        server, channel = self.current_server, self.channel_box.current()
+        url = self.channel_url(server, channel)
+        if not url:
+            return
+        self.edit_status.setText("Fetching the message from Discord…")
+        self.edit_worker = DiscordWorker(discord_client.fetch_message, url, mid)
+        self.edit_worker.done.connect(lambda ok, result: self.on_fetched(ok, result, server, channel, mid))
+        self.edit_worker.start()
+
+    def on_fetched(self, ok, result, server, channel, mid):
+        key = servers.history_key(server, channel)
+        if not self.edit_mode or key != self.channel_key():
+            return
+        log = self.channel_log(key)
+        entry = next((m for m in log if m["id"] == mid), None)
+        if not ok:
+            self.update_edit_state()
+            if entry and "can't find" in result:
+                answer = QMessageBox.question(self, "Message not found", f"{result}\n\nRemove it from the list?")
+                if answer == QMessageBox.StandardButton.Yes:
+                    self.forget_message(key, mid)
+                return
+            return QMessageBox.warning(self, "Couldn't load the message", result)
+        name = (result.get("author") or {}).get("username", "")
+        if entry is None:
+            entry = {"id": mid, "cid": self.guess_character(name), "name": name, "zoom": False,
+                     "time": local_time(result.get("timestamp"))}
+            log.append(entry)
+        # Discord has the final say: the message may have been changed since.
+        entry["content"] = result.get("content", "")
+        entry["images"] = len(result.get("attachments", []))
+        self._save_log(key, log)
+        self.edit_target = {"key": key, "id": mid, "cid": entry.get("cid"), "name": entry.get("name") or name,
+                            "zoom": entry.get("zoom", False), "time": entry["time"],
+                            "attachments": [a["id"] for a in result.get("attachments", [])]}
+        if entry.get("cid") in self.campaign_characters() and entry["cid"] != self.selected_cid:
+            self.select_character(entry["cid"], reset_name=False)
+        self.attachments.clear()
+        self.keep_images.setChecked(True)
+        self.message.setPlainText(entry["content"])
+        self.message.moveCursor(QTextCursor.MoveOperation.End)
+        self.message.setFocus()
+        self.populate_edit_list()
+        self.update_edit_state()
+
+    def save_edit(self):
+        t = self.edit_target
+        if not t:
+            return
+        server, channel = self.current_server, self.channel_box.current()
+        content = self.message.toPlainText()
+        files = list(self.attachments)
+        keep = t["attachments"] if self.keep_images.isChecked() else []
+        problems = discord_client.validate_message(content, "-", files)
+        if keep:
+            problems = [pr for pr in problems if pr != "Message is empty."]
+        if len(files) <= discord_client.MAX_FILES < len(files) + len(keep):
+            problems.append(f"{len(files) + len(keep)} images with the ones it keeps (max {discord_client.MAX_FILES}).")
+        if problems:
+            return QMessageBox.warning(self, "Save edit", "\n".join(problems))
+        self._set_sending(True)
+        self.worker = DiscordWorker(discord_client.edit_message, self.channel_url(server, channel),
+                                    t["id"], content, files, keep)
+        self.worker.done.connect(lambda ok, result: self.on_edited(ok, result, t, server, channel, content))
+        self.worker.start()
+
+    def on_edited(self, ok, result, t, server, channel, content):
+        self._set_sending(False)
+        if not ok:
+            return QMessageBox.critical(self, "Edit failed", result)
+        log = self.channel_log(t["key"])
+        for m in log:
+            if m["id"] == t["id"]:
+                m["content"] = (result or {}).get("content", content)
+                m["images"] = len((result or {}).get("attachments", []))
+                m["edited"] = datetime.now().isoformat(timespec="seconds")
+        self._save_log(t["key"], log)
+        if self.edit_target is t:
+            self.cancel_edit()
+        self.populate_edit_list()
+        self.statusBar().showMessage(f"Edited {t['name']}'s message in {server} · # {channel}", 6000)
+
+    def delete_posted(self, mid):
+        if self.edit_worker and self.edit_worker.isRunning():
+            return
+        server, channel = self.current_server, self.channel_box.current()
+        key = self.channel_key()
+        entry = next((m for m in self.channel_log(key) if m["id"] == mid), {})
+        answer = QMessageBox.question(
+            self, "Delete message",
+            f"Delete {entry.get('name') or 'this'}'s message from # {channel} in Discord?\nThis can't be undone.")
+        if answer != QMessageBox.StandardButton.Yes:
+            return
+        self.edit_worker = DiscordWorker(discord_client.delete_message, self.channel_url(server, channel), mid)
+        self.edit_worker.done.connect(lambda ok, result: self.on_deleted(ok, result, key, mid, channel))
+        self.edit_worker.start()
+
+    def on_deleted(self, ok, result, key, mid, channel):
+        if not ok and "can't find" not in result:
+            return QMessageBox.critical(self, "Delete failed", result)
+        self.forget_message(key, mid)
+        self.statusBar().showMessage(f"Deleted the message from # {channel}", 6000)
+
+    def forget_message(self, key, mid):
+        entry = self.history.get(key)
+        if not entry:
+            return
+        log = [m for m in entry.get("log", []) if m["id"] != mid]
+        if entry.get("id") == mid:  # it was the faded "last sent" line: fall back to the one before it
+            if log:
+                self.history[key] = {**log[-1], "log": log}
+            else:
+                self.history.pop(key)
+        else:
+            entry["log"] = log
+        save_json(HISTORY_FILE, self.history)
+        if self.edit_target and self.edit_target["id"] == mid:
+            self.cancel_edit()
+        self.populate_edit_list()
+        self.refresh_preview()
 
     # ---- persistence --------------------------------------------------
 
